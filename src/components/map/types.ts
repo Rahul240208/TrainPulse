@@ -6,7 +6,11 @@ export interface LiveTrainMapProps {
   height?: number;
   showOverlay?: boolean;
   onRefresh?: () => void;
+  focusStationCode?: string | null;
+  isStale?: boolean;
 }
+
+export type MapStationType = 'ORIGIN' | 'PREVIOUS' | 'CURRENT' | 'NEXT' | 'FUTURE' | 'DESTINATION';
 
 export interface MapStationPoint {
   code: string;
@@ -16,8 +20,13 @@ export interface MapStationPoint {
   hasDeparted: boolean;
   scheduledArrival: string | null;
   actualArrival: string | null;
+  scheduledDeparture?: string | null;
+  actualDeparture?: string | null;
   delayMinutes: number;
   platform: string | null;
+  stationType?: MapStationType;
+  isCurrent?: boolean;
+  isNext?: boolean;
 }
 
 export interface NormalizedMapData {
@@ -45,6 +54,7 @@ export interface NormalizedMapData {
   } | null;
   lastUpdatedTime: string;
   stations: MapStationPoint[];
+  isStale?: boolean;
 }
 
 /**
@@ -70,17 +80,45 @@ export function normalizeMapData(train: LiveTrainData | MockTrain): NormalizedMa
       lng >= 65 &&
       lng <= 100;
 
-    const validStations: MapStationPoint[] = (live.stations || [])
-      .filter(
-        (s) =>
-          typeof s.latitude === 'number' &&
-          typeof s.longitude === 'number' &&
-          !isNaN(s.latitude) &&
-          !isNaN(s.longitude) &&
-          s.latitude !== 0 &&
-          s.longitude !== 0
-      )
-      .map((s) => ({
+    const nextCode = live.nextStation?.code;
+    const currentName = (live.currentLocation?.name || '').toLowerCase();
+
+    const rawValidStations = (live.stations || []).filter(
+      (s) =>
+        typeof s.latitude === 'number' &&
+        typeof s.longitude === 'number' &&
+        !isNaN(s.latitude) &&
+        !isNaN(s.longitude) &&
+        s.latitude !== 0 &&
+        s.longitude !== 0
+    );
+
+    const validStations: MapStationPoint[] = rawValidStations.map((s, idx, arr) => {
+      const isOrigin = idx === 0;
+      const isDestination = idx === arr.length - 1;
+      const isNext = !!nextCode && s.code === nextCode;
+      const isCurrent =
+        !isNext &&
+        (s.name.toLowerCase() === currentName ||
+          currentName.includes(s.name.toLowerCase()) ||
+          currentName.includes(s.code.toLowerCase()));
+
+      let stationType: MapStationType = 'FUTURE';
+      if (isOrigin) {
+        stationType = 'ORIGIN';
+      } else if (isDestination) {
+        stationType = 'DESTINATION';
+      } else if (isCurrent) {
+        stationType = 'CURRENT';
+      } else if (isNext) {
+        stationType = 'NEXT';
+      } else if (s.hasDeparted) {
+        stationType = 'PREVIOUS';
+      } else {
+        stationType = 'FUTURE';
+      }
+
+      return {
         code: s.code,
         name: s.name,
         latitude: s.latitude,
@@ -88,9 +126,15 @@ export function normalizeMapData(train: LiveTrainData | MockTrain): NormalizedMa
         hasDeparted: s.hasDeparted,
         scheduledArrival: s.scheduledArrival,
         actualArrival: s.actualArrival,
+        scheduledDeparture: s.scheduledDeparture,
+        actualDeparture: s.actualDeparture,
         delayMinutes: s.delayMinutes,
         platform: s.platform,
-      }));
+        stationType,
+        isCurrent,
+        isNext,
+      };
+    });
 
     return {
       trainNumber: live.trainNumber,

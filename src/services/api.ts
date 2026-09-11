@@ -7,8 +7,10 @@ import type {
   StationSearchResult,
   PlatformInfo,
   CoachComposition,
+  SearchResultItem,
 } from '../types/api';
 import { searchStations as searchLocalStations } from '../data/stations';
+import { MOCK_TRAINS } from '../data/mockTrains';
 
 
 
@@ -409,6 +411,118 @@ export async function fetchTrainCoaches(
 
   return json.data;
 }
+
+/**
+ * Global search across train numbers, train names, and stations (Milestone 11: Map-First Search).
+ */
+export async function searchGlobal(
+  rawQuery: string,
+  options?: { signal?: AbortSignal; timeoutMs?: number }
+): Promise<SearchResultItem[]> {
+  const query = (rawQuery || '').trim();
+  if (query.length < 2) {
+    return [];
+  }
+
+  const baseUrl = getApiBaseUrl();
+  const endpoint = `${baseUrl}/api/v1/search?q=${encodeURIComponent(query)}`;
+  const timeoutMs = options?.timeoutMs ?? 6000;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  if (options?.signal) {
+    options.signal.addEventListener('abort', () => controller.abort());
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+
+    if (response.ok) {
+      const json = (await response.json()) as ApiResponse<SearchResultItem[]>;
+      if (json.success && Array.isArray(json.data)) {
+        return json.data;
+      }
+    }
+  } catch (err: unknown) {
+    // If aborted by user, rethrow
+    if (err instanceof Error && err.name === 'AbortError' && options?.signal?.aborted) {
+      throw err;
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+
+  // Graceful Offline Fallback: match local mock trains and stations
+  const queryLower = query.toLowerCase();
+  const queryUpper = query.toUpperCase();
+  const isNumeric = /^\d+$/.test(query);
+
+  const matchedTrains: SearchResultItem[] = [];
+  for (const train of Object.values(MOCK_TRAINS)) {
+    const tNum = train.trainNumber;
+    const tName = train.trainName.toLowerCase();
+    const srcCode = train.sourceCode.toUpperCase();
+    const destCode = train.destinationCode.toUpperCase();
+
+    if (tNum === query) {
+      matchedTrains.unshift({
+        type: 'TRAIN',
+        trainNumber: train.trainNumber,
+        trainName: train.trainName,
+        trainType: train.trainType,
+        source: { code: train.sourceCode, name: train.sourceStation },
+        destination: { code: train.destinationCode, name: train.destinationStation },
+      });
+      continue;
+    }
+
+    if (
+      (isNumeric && tNum.startsWith(query)) ||
+      tName.includes(queryLower) ||
+      srcCode === queryUpper ||
+      destCode === queryUpper
+    ) {
+      matchedTrains.push({
+        type: 'TRAIN',
+        trainNumber: train.trainNumber,
+        trainName: train.trainName,
+        trainType: train.trainType,
+        source: { code: train.sourceCode, name: train.sourceStation },
+        destination: { code: train.destinationCode, name: train.destinationStation },
+      });
+    }
+  }
+
+  const localStations = searchLocalStations(query);
+  const matchedStations: SearchResultItem[] = localStations.map((s) => ({
+    type: 'STATION',
+    stationCode: s.code,
+    stationName: s.name,
+    city: s.city,
+    state: s.state,
+  }));
+
+  const combined = [...matchedTrains, ...matchedStations];
+  const seen = new Set<string>();
+  const results: SearchResultItem[] = [];
+
+  for (const item of combined) {
+    const key = item.type === 'TRAIN' ? `TRAIN_${item.trainNumber}` : `STATION_${item.stationCode}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      results.push(item);
+      if (results.length >= 15) break;
+    }
+  }
+
+  return results;
+}
+
 
 
 

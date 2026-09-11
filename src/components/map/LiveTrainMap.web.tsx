@@ -9,13 +9,38 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
   train,
   height = 320,
   showOverlay = true,
+  focusStationCode,
+  isStale,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const normalizedData = useMemo(() => normalizeMapData(train), [train]);
+  const normalizedData = useMemo(() => {
+    const data = normalizeMapData(train);
+    if (isStale !== undefined) {
+      data.isStale = isStale;
+    }
+    return data;
+  }, [train, isStale]);
   const activeTrainNumberRef = useRef<string>(normalizedData.trainNumber);
   const [initialHtml, setInitialHtml] = useState<string>(() =>
     generateLeafletHtml(normalizedData)
   );
+
+  // Send smooth station focus when focusStationCode changes
+  useEffect(() => {
+    if (focusStationCode) {
+      try {
+        iframeRef.current?.contentWindow?.postMessage(
+          {
+            type: 'FOCUS_STATION',
+            data: { code: focusStationCode },
+          },
+          '*'
+        );
+      } catch {
+        // Ignored if window not ready
+      }
+    }
+  }, [focusStationCode]);
 
   // Send smooth telemetry updates via postMessage when train data refreshes
   useEffect(() => {

@@ -77,7 +77,7 @@ export default function TrainsBetweenScreen() {
 
   const handleTrackTrain = (trainNumber: string) => {
     router.push({
-      pathname: '/train/[trainNumber]',
+      pathname: '/(tabs)/map',
       params: { trainNumber },
     } as any);
   };

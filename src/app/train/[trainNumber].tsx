@@ -357,7 +357,7 @@ export default function TrainDetailsScreen() {
         </TouchableOpacity>
       </View>
 
-      <LiveTrainMap train={train} height={mapHeight} showOverlay={true} />
+      <LiveTrainMap train={train} height={mapHeight} showOverlay={true} isStale={isStale} />
     </View>
   );
 

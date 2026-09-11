@@ -12,13 +12,37 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
   train,
   height = 320,
   showOverlay = true,
+  focusStationCode,
+  isStale,
 }) => {
   const webViewRef = useRef<any>(null);
-  const normalizedData = useMemo(() => normalizeMapData(train), [train]);
+  const normalizedData = useMemo(() => {
+    const data = normalizeMapData(train);
+    if (isStale !== undefined) {
+      data.isStale = isStale;
+    }
+    return data;
+  }, [train, isStale]);
   const activeTrainNumberRef = useRef<string>(normalizedData.trainNumber);
   const [initialHtml, setInitialHtml] = useState<string>(() =>
     generateLeafletHtml(normalizedData)
   );
+
+  // Send smooth station focus when focusStationCode changes
+  useEffect(() => {
+    if (focusStationCode) {
+      try {
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: 'FOCUS_STATION',
+            data: { code: focusStationCode },
+          })
+        );
+      } catch {
+        // Ignored if webView not ready
+      }
+    }
+  }, [focusStationCode]);
 
   // Send smooth telemetry updates to WebView via postMessage
   useEffect(() => {

@@ -152,4 +152,31 @@ export interface TrainsBetweenResult {
   trains: TrainBetweenItem[];
 }
 
+export type SearchResultType = 'TRAIN' | 'STATION';
+
+export interface SearchResultItem {
+  type: SearchResultType;
+  trainNumber?: string;
+  trainName?: string;
+  trainType?: string;
+  stationCode?: string;
+  stationName?: string;
+  city?: string;
+  state?: string;
+  source?: {
+    code: string;
+    name: string;
+  };
+  destination?: {
+    code: string;
+    name: string;
+  };
+}
+
+export interface SearchResponse {
+  success: boolean;
+  data: SearchResultItem[];
+}
+
+
 

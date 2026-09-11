@@ -6,6 +6,7 @@ import { devLogger } from './middleware/logger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { liveTrainRouter } from './routes/liveTrain.js';
 import { stationsRouter } from './routes/stations.js';
+import { searchRouter } from './routes/search.js';
 
 export const app = new Hono();
 
@@ -49,6 +50,7 @@ app.get('/', (c) => {
 // Mount Routes
 app.route('/api/v1/trains', liveTrainRouter);
 app.route('/api/v1/stations', stationsRouter);
+app.route('/api/v1/search', searchRouter);
 
 
 // Start server if executed directly

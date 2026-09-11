@@ -163,7 +163,7 @@ export const TrainResultCard: React.FC<TrainResultCardProps> = ({ train, onTrack
       activeOpacity={0.88}
       accessibilityRole={Platform.OS === 'web' ? undefined : 'button'}
       accessibilityLabel={accessibleLabel}
-      accessibilityHint="Opens live train status and map"
+      accessibilityHint="Opens train route and live tracking on the map"
     >
       {/* Top Header: Train Title & Status Badge */}
       <View style={styles.headerRow}>
@@ -275,10 +275,10 @@ export const TrainResultCard: React.FC<TrainResultCardProps> = ({ train, onTrack
         </View>
       </View>
 
-      {/* View Live Status CTA Badge */}
+      {/* Track on Live Map CTA Button */}
       <View style={styles.ctaButton}>
-        <Ionicons name="pulse" size={16} color="#0B0F19" style={{ marginRight: 6 }} />
-        <Text style={styles.ctaButtonText}>View Live Status</Text>
+        <Ionicons name="map" size={16} color="#0B0F19" style={{ marginRight: 6 }} />
+        <Text style={styles.ctaButtonText}>Track on Live Map</Text>
         <Ionicons name="arrow-forward" size={14} color="#0B0F19" style={{ marginLeft: 4 }} />
       </View>
     </TouchableOpacity>

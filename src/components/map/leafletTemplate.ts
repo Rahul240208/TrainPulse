@@ -124,28 +124,71 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       font-weight: 600;
       margin-left: 2px;
     }
+    .train-movement-badge {
+      font-size: 8px;
+      font-weight: 800;
+      color: #F59E0B;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-top: 3px;
+      white-space: nowrap;
+      display: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      letter-spacing: 0.3px;
+    }
 
     /* Station Markers */
     .station-marker {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #475569;
       border: 2px solid #0F172A;
       box-shadow: 0 1px 4px rgba(0,0,0,0.5);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: #FFFFFF;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .station-marker:hover {
+      transform: scale(1.3);
     }
     .station-marker.origin {
       background: #10B981;
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       border: 2px solid #FFFFFF;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
     }
     .station-marker.dest {
       background: #EF4444;
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       border: 2px solid #FFFFFF;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+    .station-marker.previous {
+      background: #1E293B;
+      width: 13px;
+      height: 13px;
+      border: 1px solid #64748B;
+      color: #94A3B8;
+    }
+    .station-marker.current {
+      background: #38BDF8;
+      width: 15px;
+      height: 15px;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 0 12px #38BDF8;
+      color: #0F172A;
+      animation: pulse-current 2s infinite;
     }
     .station-marker.next-stop {
       background: #F59E0B;
@@ -153,6 +196,19 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       height: 14px;
       border: 2px solid #FFFFFF;
       box-shadow: 0 0 10px #F59E0B;
+      color: #0F172A;
+    }
+    .station-marker.future {
+      background: #0F172A;
+      width: 11px;
+      height: 11px;
+      border: 2px solid #64748B;
+      color: #64748B;
+    }
+    @keyframes pulse-current {
+      0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
     }
 
     /* Station label */
@@ -225,9 +281,39 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       bottom: 24px;
       display: flex;
       flex-direction: column;
+      align-items: flex-end;
       gap: 8px;
       z-index: 1000;
     }
+    .follow-btn {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .follow-btn.active {
+      background: #0284C7;
+      border-color: #38BDF8;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    .follow-btn.inactive {
+      background: #0F172A;
+      border-color: #334155;
+      color: #94A3B8;
+    }
+    .follow-btn svg { width: 14px; height: 14px; fill: currentColor; }
     .map-btn {
       width: 36px;
       height: 36px;
@@ -289,7 +375,11 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
   <div class="floating-controls">
     ${
       hasExactCoordinates
-        ? `<button class="map-btn" id="btn-recenter" title="Center on Train">
+        ? `<button class="follow-btn active" id="btn-follow" title="Toggle Follow Train">
+            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+            <span id="btn-follow-label">Following</span>
+          </button>
+          <button class="map-btn" id="btn-recenter" title="Center on Train">
             <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
           </button>`
         : ''
@@ -336,50 +426,112 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       // Collect lat/lng bounds
       var bounds = [];
 
-      // 1. Draw Railway Route Polyline if station points available
+      // 1. Draw Railway Route Polylines (Differentiating completed vs remaining segments)
       if (stations.length > 1) {
-        var routeLatLngs = stations.map(function(s) {
-          return [s.latitude, s.longitude];
-        });
-
-        // Background railway track
-        L.polyline(routeLatLngs, {
-          color: '#0284C7',
-          weight: 4,
-          opacity: 0.8,
-          lineJoin: 'round'
-        }).addTo(map);
-
-        // Dashed railway ties styling
-        L.polyline(routeLatLngs, {
-          color: '#38BDF8',
-          weight: 2,
-          dashArray: '6, 8',
-          opacity: 0.9
-        }).addTo(map);
-
         stations.forEach(function(s) {
           bounds.push([s.latitude, s.longitude]);
         });
+
+        // Find split index between completed and remaining route
+        var splitIdx = -1;
+        for (var i = 0; i < stations.length; i++) {
+          if (stations[i].stationType === 'CURRENT' || stations[i].isCurrent) {
+            splitIdx = i;
+            break;
+          }
+          if (stations[i].hasDeparted || stations[i].stationType === 'PREVIOUS') {
+            splitIdx = i;
+          }
+        }
+
+        var allRouteLatLngs = stations.map(function(s) { return [s.latitude, s.longitude]; });
+
+        // Base track layer for entire route
+        L.polyline(allRouteLatLngs, {
+          color: '#334155',
+          weight: 4,
+          opacity: 0.7,
+          lineJoin: 'round'
+        }).addTo(map);
+
+        // Remaining route (dashed track)
+        L.polyline(allRouteLatLngs, {
+          color: '#64748B',
+          weight: 2,
+          dashArray: '6, 8',
+          opacity: 0.8
+        }).addTo(map);
+
+        // Completed route segment (solid glowing line)
+        if (splitIdx >= 0) {
+          var completedLatLngs = stations.slice(0, splitIdx + 1).map(function(s) {
+            return [s.latitude, s.longitude];
+          });
+          if (hasTrainCoords) {
+            completedLatLngs.push([trainLat, trainLng]);
+          }
+          if (completedLatLngs.length > 1) {
+            L.polyline(completedLatLngs, {
+              color: '#0284C7',
+              weight: 4,
+              opacity: 0.95,
+              lineJoin: 'round'
+            }).addTo(map);
+
+            L.polyline(completedLatLngs, {
+              color: '#38BDF8',
+              weight: 2,
+              opacity: 1
+            }).addTo(map);
+          }
+        }
       }
 
-      // 2. Render Station Halt Markers
+      // 2. Render Station Halt Markers with symbols (✓, ●, ◉, ○)
       stations.forEach(function(s, idx) {
-        var isOrigin = idx === 0;
-        var isDest = idx === stations.length - 1;
-        var isNext = '${nextStation?.code || ''}' === s.code;
+        var isOrigin = s.stationType === 'ORIGIN' || idx === 0;
+        var isDest = s.stationType === 'DESTINATION' || idx === stations.length - 1;
+        var isCurrent = s.stationType === 'CURRENT' || s.isCurrent;
+        var isNext = s.stationType === 'NEXT' || s.isNext || ('${nextStation?.code || ''}' === s.code);
+        var isPrevious = s.stationType === 'PREVIOUS' || s.hasDeparted;
 
         var markerClass = 'station-marker';
-        if (isOrigin) markerClass += ' origin';
-        else if (isDest) markerClass += ' dest';
-        else if (isNext) markerClass += ' next-stop';
+        var symbol = '';
+
+        if (isCurrent) {
+          markerClass += ' current';
+          symbol = '●';
+        } else if (isNext) {
+          markerClass += ' next-stop';
+          symbol = '◉';
+        } else if (isPrevious) {
+          markerClass += ' previous' + (isOrigin ? ' origin' : '');
+          symbol = '✓';
+        } else if (isOrigin) {
+          markerClass += ' origin';
+          symbol = '●';
+        } else if (isDest) {
+          markerClass += ' dest';
+          symbol = '◉';
+        } else {
+          markerClass += ' future';
+          symbol = '○';
+        }
 
         var stationIcon = L.divIcon({
           className: 'custom-station-icon',
-          html: '<div class="' + markerClass + '" title="' + s.name + ' (' + s.code + ')"></div>',
-          iconSize: [14, 14],
-          iconAnchor: [7, 7]
+          html: '<div class="' + markerClass + '" title="' + s.name + ' (' + s.code + ')">' + symbol + '</div>',
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
         });
+
+        var statusLabel = isCurrent
+          ? 'Current Station'
+          : (isNext
+            ? 'Next Stop'
+            : (isPrevious
+              ? 'Departed'
+              : (isOrigin ? 'Origin' : (isDest ? 'Destination' : 'Upcoming'))));
 
         var delayBadge = s.delayMinutes <= 0
           ? '<span class="text-ontime">On Time</span>'
@@ -387,8 +539,8 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
 
         var popupContent = '<div class="popup-card">' +
           '<div class="popup-title">' + s.code + ' &mdash; ' + s.name + '</div>' +
-          '<div class="popup-row"><span>Status:</span><strong>' + (s.hasDeparted ? 'Departed' : (isNext ? 'Next Stop' : 'Upcoming')) + '</strong></div>' +
-          '<div class="popup-row"><span>Arr / Dep:</span><strong>' + (s.actualArrival || s.scheduledArrival || '--:--') + ' / ' + (s.scheduledDeparture || '--:--') + '</strong></div>' +
+          '<div class="popup-row"><span>Status:</span><strong>' + statusLabel + '</strong></div>' +
+          '<div class="popup-row"><span>Arr / Dep:</span><strong>' + (s.actualArrival || s.scheduledArrival || '--:--') + ' / ' + (s.actualDeparture || s.scheduledDeparture || '--:--') + '</strong></div>' +
           '<div class="popup-row"><span>Delay:</span>' + delayBadge + '</div>' +
           (s.platform ? '<div class="popup-row"><span>Platform:</span><strong>PF ' + s.platform + '</strong></div>' : '') +
         '</div>';
@@ -413,6 +565,7 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
               '${trainNumber}' +
               '<span class="train-speed-tag">${speedKmH} km/h</span>' +
             '</div>' +
+            '<div class="train-movement-badge">Estimated movement</div>' +
           '</div>',
           iconSize: [60, 60],
           iconAnchor: [30, 20],
@@ -444,15 +597,114 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
         map.setView([trainLat, trainLng], 9);
       }
 
-      // Smooth Marker Animation Engine (Milestone 9)
+      // Follow Train Mode state & camera control
+      var isFollowMode = hasTrainCoords;
+      var btnFollow = document.getElementById('btn-follow');
+      var btnFollowLabel = document.getElementById('btn-follow-label');
+
+      function setFollowMode(active) {
+        isFollowMode = active;
+        if (btnFollow) {
+          if (active) {
+            btnFollow.className = 'follow-btn active';
+            if (btnFollowLabel) btnFollowLabel.textContent = 'Following';
+          } else {
+            btnFollow.className = 'follow-btn inactive';
+            if (btnFollowLabel) btnFollowLabel.textContent = 'Follow';
+          }
+        }
+      }
+
+      // Automatically pause follow mode on user manual drag/pan
+      map.on('dragstart', function() {
+        if (isFollowMode) {
+          setFollowMode(false);
+        }
+      });
+
+      // Smooth Marker Animation Engine (Milestone 15)
       var activeAnimationId = null;
+      var MAX_JUMP_DEGREES = 1.0;
+      var DISALLOWED_STATUSES = ['CANCELLED', 'ARRIVED', 'COMPLETED', 'DIVERTED'];
 
       function easeOutCubic(t) {
         var clamped = Math.min(Math.max(t, 0), 1);
         return 1 - Math.pow(1 - clamped, 3);
       }
 
-      function smoothMoveMarker(marker, startLatLng, targetLatLng, durationMs) {
+      function shouldInterpolate(prevLatLng, targetLatLng, newData) {
+        if (!prevLatLng || !targetLatLng || !newData) return false;
+        if (newData.isStale === true) return false;
+        var st = (newData.status || '').toUpperCase().trim();
+        for (var i = 0; i < DISALLOWED_STATUSES.length; i++) {
+          if (st === DISALLOWED_STATUSES[i] || st.indexOf(DISALLOWED_STATUSES[i]) !== -1) {
+            return false;
+          }
+        }
+        var pLat = typeof prevLatLng.lat === 'number' ? prevLatLng.lat : prevLatLng[0];
+        var pLng = typeof prevLatLng.lng === 'number' ? prevLatLng.lng : prevLatLng[1];
+        var tLat = typeof targetLatLng.lat === 'number' ? targetLatLng.lat : targetLatLng[0];
+        var tLng = typeof targetLatLng.lng === 'number' ? targetLatLng.lng : targetLatLng[1];
+
+        if (typeof pLat !== 'number' || typeof pLng !== 'number' || pLat !== pLat || pLng !== pLng) return false;
+        if (typeof tLat !== 'number' || typeof tLng !== 'number' || tLat !== tLat || tLng !== tLng) return false;
+        if (pLat === 0 && pLng === 0) return false;
+        if (tLat === 0 && tLng === 0) return false;
+        // Bounds check (5-40 N, 65-100 E)
+        if (pLat < 5 || pLat > 40 || pLng < 65 || pLng > 100) return false;
+        if (tLat < 5 || tLat > 40 || tLng < 65 || tLng > 100) return false;
+
+        var dLat = Math.abs(tLat - pLat);
+        var dLng = Math.abs(tLng - pLng);
+        // Negligible movement: snap without animating
+        if (dLat < 0.00001 && dLng < 0.00001) return false;
+        // Abnormal jump guard (> 1.0 degree ~ 111 km)
+        if (dLat > MAX_JUMP_DEGREES || dLng > MAX_JUMP_DEGREES) return false;
+
+        return true;
+      }
+
+      function setMarkerMovementIndicator(marker, isMoving) {
+        if (!marker) return;
+        var el = marker.getElement ? marker.getElement() : null;
+        if (el) {
+          var badge = el.querySelector('.train-movement-badge');
+          if (badge) {
+            badge.style.display = isMoving ? 'inline-block' : 'none';
+          }
+        }
+      }
+
+      function buildPopupContent(newData, isInterpolating) {
+        var delayBadge = newData.delayMinutes <= 0
+          ? '<span class="text-ontime">On Time</span>'
+          : '<span class="text-late">+' + newData.delayMinutes + 'm</span>';
+
+        var accuracyLabel = isInterpolating
+          ? 'ESTIMATED MOVEMENT'
+          : (newData.positionType === 'ACTUAL_GPS' ? 'ACTUAL GPS' : 'ESTIMATED SCHEDULE');
+
+        var accuracyStyle = isInterpolating
+          ? 'color:#F59E0B; background:#F59E0B22; border:1px solid #F59E0B66;'
+          : '';
+
+        var movementRow = isInterpolating
+          ? '<div class="popup-row"><span>Movement:</span><strong style="color:#F59E0B;">Estimated movement</strong></div>'
+          : '';
+
+        return '<div class="popup-card">' +
+          '<div class="popup-title">' + newData.trainNumber + ' &bull; ' + newData.trainName + '</div>' +
+          '<div class="popup-row"><span>Location:</span><strong>' + newData.currentStationName + '</strong></div>' +
+          '<div class="popup-row"><span>Speed:</span><strong>' + newData.speedKmH + ' km/h</strong></div>' +
+          '<div class="popup-row"><span>Delay:</span>' + delayBadge + '</div>' +
+          movementRow +
+          '<div class="popup-row"><span>Next Stop:</span><strong>' + (newData.nextStation ? newData.nextStation.name : 'Terminated') + '</strong></div>' +
+          '<div class="popup-row"><span>Updated:</span><strong>' + newData.lastUpdatedTime + '</strong></div>' +
+          '<div class="accuracy-tag" style="' + accuracyStyle + '">' + accuracyLabel + '</div>' +
+        '</div>';
+      }
+
+      function smoothMoveMarker(marker, startLatLng, targetLatLng, durationMs, newData) {
         if (activeAnimationId) {
           cancelAnimationFrame(activeAnimationId);
           activeAnimationId = null;
@@ -462,10 +714,15 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
         var dLat = targetLatLng.lat - startLatLng.lat;
         var dLng = targetLatLng.lng - startLatLng.lng;
 
-        // Skip animation if virtually identical position
-        if (Math.abs(dLat) < 0.00001 && Math.abs(dLng) < 0.00001) {
-          marker.setLatLng(targetLatLng);
-          return;
+        // Visual indicator: show "Estimated movement" while animating
+        setMarkerMovementIndicator(marker, true);
+        marker.setPopupContent(buildPopupContent(newData, true));
+
+        // Update callout pill with authentic provider speed (no fake animation speed)
+        var markerEl = marker.getElement ? marker.getElement() : null;
+        if (markerEl) {
+          var speedEl = markerEl.querySelector('.train-speed-tag');
+          if (speedEl) speedEl.textContent = newData.speedKmH + ' km/h';
         }
 
         function step(now) {
@@ -483,6 +740,9 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
           } else {
             marker.setLatLng(targetLatLng);
             activeAnimationId = null;
+            // Animation complete: restore authentic accuracy label and hide estimated movement indicator
+            setMarkerMovementIndicator(marker, false);
+            marker.setPopupContent(buildPopupContent(newData, false));
           }
         }
 
@@ -499,7 +759,29 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
             return;
           }
         }
-        if (!payload || payload.type !== 'UPDATE_TELEMETRY' || !payload.data) return;
+        if (!payload) return;
+
+        if (payload.type === 'FOCUS_STATION' && payload.data && payload.data.code) {
+          var targetCode = payload.data.code;
+          var targetStation = stations.find(function(s) { return s.code === targetCode; });
+          if (targetStation) {
+            setFollowMode(false);
+            map.flyTo([targetStation.latitude, targetStation.longitude], 12, { duration: 1 });
+          }
+          return;
+        }
+
+        if (payload.type === 'CENTER_TRAIN') {
+          if (hasTrainCoords && trainMarkerInstance) {
+            setFollowMode(true);
+            map.flyTo([trainLat, trainLng], 10, { duration: 1 });
+          } else if (bounds.length > 1) {
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
+          }
+          return;
+        }
+
+        if (payload.type !== 'UPDATE_TELEMETRY' || !payload.data) return;
 
         var newData = payload.data;
         var newLat = newData.latitude;
@@ -510,29 +792,32 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
 
           if (trainMarkerInstance) {
             var currentLatLng = trainMarkerInstance.getLatLng();
-            smoothMoveMarker(trainMarkerInstance, currentLatLng, targetLatLng, 1500);
+            var canAnimate = shouldInterpolate(currentLatLng, targetLatLng, newData);
 
-            var markerEl = trainMarkerInstance.getElement();
-            if (markerEl) {
-              var speedEl = markerEl.querySelector('.train-speed-tag');
-              if (speedEl) speedEl.textContent = newData.speedKmH + ' km/h';
+            if (canAnimate) {
+              smoothMoveMarker(trainMarkerInstance, currentLatLng, targetLatLng, 1500, newData);
+            } else {
+              // Direct snap without interpolation
+              if (activeAnimationId) {
+                cancelAnimationFrame(activeAnimationId);
+                activeAnimationId = null;
+              }
+              setMarkerMovementIndicator(trainMarkerInstance, false);
+              trainMarkerInstance.setLatLng(targetLatLng);
+
+              var markerEl = trainMarkerInstance.getElement ? trainMarkerInstance.getElement() : null;
+              if (markerEl) {
+                var speedEl = markerEl.querySelector('.train-speed-tag');
+                if (speedEl) speedEl.textContent = newData.speedKmH + ' km/h';
+              }
+
+              trainMarkerInstance.setPopupContent(buildPopupContent(newData, false));
             }
 
-            var delayBadge = newData.delayMinutes <= 0
-              ? '<span class="text-ontime">On Time</span>'
-              : '<span class="text-late">+' + newData.delayMinutes + 'm</span>';
-
-            var updatedPopupHtml = '<div class="popup-card">' +
-              '<div class="popup-title">' + newData.trainNumber + ' &bull; ' + newData.trainName + '</div>' +
-              '<div class="popup-row"><span>Location:</span><strong>' + newData.currentStationName + '</strong></div>' +
-              '<div class="popup-row"><span>Speed:</span><strong>' + newData.speedKmH + ' km/h</strong></div>' +
-              '<div class="popup-row"><span>Delay:</span>' + delayBadge + '</div>' +
-              '<div class="popup-row"><span>Next Stop:</span><strong>' + (newData.nextStation ? newData.nextStation.name : 'Terminated') + '</strong></div>' +
-              '<div class="popup-row"><span>Updated:</span><strong>' + newData.lastUpdatedTime + '</strong></div>' +
-              '<div class="accuracy-tag">' + (newData.positionType === 'ACTUAL_GPS' ? 'ACTUAL GPS' : 'ESTIMATED SCHEDULE') + '</div>' +
-            '</div>';
-
-            trainMarkerInstance.setPopupContent(updatedPopupHtml);
+            // Follow mode camera pan: keep train centered when follow is active
+            if (isFollowMode) {
+              map.panTo(targetLatLng, { animate: true, duration: 1.0 });
+            }
           }
         }
       }
@@ -541,9 +826,18 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       document.addEventListener('message', handleTelemetryMessage);
 
       // Hook up UI buttons
+      if (btnFollow && hasTrainCoords) {
+        btnFollow.addEventListener('click', function() {
+          setFollowMode(true);
+          var curPos = trainMarkerInstance ? trainMarkerInstance.getLatLng() : [trainLat, trainLng];
+          map.panTo(curPos, { animate: true, duration: 0.8 });
+        });
+      }
+
       var btnRecenter = document.getElementById('btn-recenter');
       if (btnRecenter && hasTrainCoords && trainMarkerInstance) {
         btnRecenter.addEventListener('click', function() {
+          setFollowMode(true);
           map.flyTo([trainLat, trainLng], 10, { duration: 1 });
           trainMarkerInstance.openPopup();
         });
@@ -552,6 +846,7 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       var btnFitRoute = document.getElementById('btn-fit-route');
       if (btnFitRoute && bounds.length > 0) {
         btnFitRoute.addEventListener('click', function() {
+          setFollowMode(false);
           if (bounds.length > 1) {
             map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
           } else if (hasTrainCoords) {

@@ -233,5 +233,30 @@ describe('Map Normalization & Leaflet Template Engine', () => {
       expect(html).toContain('id="btn-fit-route"');
       expect(html).toContain('floating-controls');
     });
+
+    it('10. Includes Follow Train button and automatic camera drag pause logic', () => {
+      const normalized = normalizeMapData(sampleLiveTrain);
+      const html = generateLeafletHtml(normalized);
+
+      expect(html).toContain('id="btn-follow"');
+      expect(html).toContain('btn-follow-label');
+      expect(html).toContain('map.on(\'dragstart\'');
+      expect(html).toContain('setFollowMode(false)');
+    });
+
+    it('11. Renders differentiated station markers with symbols and segmented route polylines', () => {
+      const normalized = normalizeMapData(sampleLiveTrain);
+      const html = generateLeafletHtml(normalized);
+
+      // Station symbols: ✓ for previous/departed, ● for current, ◉ for next
+      expect(html).toContain('✓');
+      expect(html).toContain('●');
+      expect(html).toContain('◉');
+      // Segmented route polylines
+      expect(html).toContain('completedLatLngs');
+      expect(html).toContain('allRouteLatLngs');
+      expect(html).toContain('#0284C7');
+      expect(html).toContain('#334155');
+    });
   });
 });
