@@ -429,7 +429,9 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
       // 1. Draw Railway Route Polylines (Differentiating completed vs remaining segments)
       if (stations.length > 1) {
         stations.forEach(function(s) {
-          bounds.push([s.latitude, s.longitude]);
+          if (s.latitude !== null && s.longitude !== null) {
+            bounds.push([s.latitude, s.longitude]);
+          }
         });
 
         // Find split index between completed and remaining route
@@ -444,7 +446,9 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
           }
         }
 
-        var allRouteLatLngs = stations.map(function(s) { return [s.latitude, s.longitude]; });
+        var allRouteLatLngs = stations
+          .filter(function(s) { return s.latitude !== null && s.longitude !== null; })
+          .map(function(s) { return [s.latitude, s.longitude]; });
 
         // Base track layer for entire route
         L.polyline(allRouteLatLngs, {
@@ -464,9 +468,11 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
 
         // Completed route segment (solid glowing line)
         if (splitIdx >= 0) {
-          var completedLatLngs = stations.slice(0, splitIdx + 1).map(function(s) {
-            return [s.latitude, s.longitude];
-          });
+          var completedLatLngs = stations.slice(0, splitIdx + 1)
+            .filter(function(s) { return s.latitude !== null && s.longitude !== null; })
+            .map(function(s) {
+              return [s.latitude, s.longitude];
+            });
           if (hasTrainCoords) {
             completedLatLngs.push([trainLat, trainLng]);
           }
@@ -545,8 +551,10 @@ export function generateLeafletHtml(data: NormalizedMapData): string {
           (s.platform ? '<div class="popup-row"><span>Platform:</span><strong>PF ' + s.platform + '</strong></div>' : '') +
         '</div>';
 
-        var stationMarker = L.marker([s.latitude, s.longitude], { icon: stationIcon }).addTo(map);
-        stationMarker.bindPopup(popupContent);
+        if (s.latitude !== null && s.longitude !== null) {
+          var stationMarker = L.marker([s.latitude, s.longitude], { icon: stationIcon }).addTo(map);
+          stationMarker.bindPopup(popupContent);
+        }
       });
 
       // 3. Render Train Marker (Truthful GPS / Estimated Position)

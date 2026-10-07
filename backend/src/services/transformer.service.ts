@@ -9,6 +9,7 @@ import type {
   CoachComposition,
 } from '../schemas/liveTrain.js';
 import { MOCK_COACH_DATABASE } from './mockData.service.js';
+import { STATION_COORDS } from './stationCoords.js';
 
 /**
  * Determines the truthful position accuracy classification.
@@ -83,10 +84,10 @@ export function transformRailRadarToTrainPulse(data: RailRadarData): LiveTrainDa
   }
 
   // Coordinates: Only use valid numbers within bounds, never invent or fabricate
-  const rawLat = loc?.lat ?? data.train?.source?.lat;
-  const rawLng = loc?.lng ?? data.train?.source?.lng;
-  const latitude = (typeof rawLat === 'number' && !isNaN(rawLat) && rawLat !== 0) ? rawLat : null;
-  const longitude = (typeof rawLng === 'number' && !isNaN(rawLng) && rawLng !== 0) ? rawLng : null;
+  const rawLat = loc?.lat;
+  const rawLng = loc?.lng;
+  let latitude = (typeof rawLat === 'number' && !isNaN(rawLat) && rawLat !== 0) ? rawLat : null;
+  let longitude = (typeof rawLng === 'number' && !isNaN(rawLng) && rawLng !== 0) ? rawLng : null;
 
   // Speed: 0 if cancelled, arrived, or not started
   let speedKmH = 0;
@@ -108,8 +109,8 @@ export function transformRailRadarToTrainPulse(data: RailRadarData): LiveTrainDa
     return {
       code: stop.stationCode || 'STN',
       name: stop.stationName || stop.stationCode || 'Station',
-      latitude: 0, // RailRadar route stops don't always provide individual lat/lng
-      longitude: 0,
+      latitude: (typeof stop.lat === 'number' && !isNaN(stop.lat) && stop.lat !== 0) ? stop.lat : (STATION_COORDS[stop.stationCode]?.lat ?? null),
+      longitude: (typeof stop.lng === 'number' && !isNaN(stop.lng) && stop.lng !== 0) ? stop.lng : (STATION_COORDS[stop.stationCode]?.lng ?? null),
       scheduledArrival: stop.scheduledArrival ? formatTimeOnly(stop.scheduledArrival) : null,
       actualArrival: stop.actualArrival ? formatTimeOnly(stop.actualArrival) : null,
       scheduledDeparture: stop.scheduledDeparture ? formatTimeOnly(stop.scheduledDeparture) : null,
@@ -147,6 +148,53 @@ export function transformRailRadarToTrainPulse(data: RailRadarData): LiveTrainDa
           platform: firstUpcoming.platform || null,
           distanceRemainingKm: firstUpcoming.distance ?? null,
         };
+      }
+    }
+  }
+
+  // Infer hasDeparted based on nextStation if upstream didn't provide proper status
+  if (nextStation) {
+    const nextIdx = stations.findIndex((s) => s.code === nextStation!.code);
+    if (nextIdx > 0) {
+      for (let i = 0; i < nextIdx; i++) {
+        stations[i].hasDeparted = true;
+      }
+    }
+  }
+
+  // Calculate approximate location if exact GPS is missing
+  if (latitude === null && longitude === null && status === 'RUNNING') {
+    if (positionType === 'STATION_DEPARTURE') {
+      const currentStn = loc?.stationCode ? stations.find(s => s.code === loc.stationCode) : stations.filter(s => s.hasDeparted).pop();
+      if (currentStn && currentStn.latitude && currentStn.longitude) {
+        latitude = currentStn.latitude;
+        longitude = currentStn.longitude;
+      }
+    }
+    
+    // If still null (e.g. station coords missing or ESTIMATED_SCHEDULE)
+    if (latitude === null || longitude === null) {
+      const prevStation = stations.filter(s => s.hasDeparted && s.latitude !== null && s.longitude !== null).pop();
+      const nextStnObj = nextStation ? stations.find(s => s.code === nextStation.code && s.latitude !== null && s.longitude !== null) : null;
+      
+      if (prevStation?.latitude && prevStation?.longitude && nextStnObj?.latitude && nextStnObj?.longitude) {
+        const dLat = nextStnObj.latitude - prevStation.latitude;
+        const dLng = nextStnObj.longitude - prevStation.longitude;
+        
+        const R = 6371;
+        const lat1 = prevStation.latitude * Math.PI / 180;
+        const lat2 = nextStnObj.latitude * Math.PI / 180;
+        const a = Math.sin(dLat * Math.PI / 180 / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng * Math.PI / 180 / 2) ** 2;
+        const totalDist = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        
+        const rem = nextStation?.distanceRemainingKm;
+        let fraction = 0.5;
+        if (rem != null && totalDist > 0 && rem <= totalDist) {
+          fraction = Math.max(0, Math.min(1, (totalDist - rem) / totalDist));
+        }
+        
+        latitude = Number((prevStation.latitude + dLat * fraction).toFixed(6));
+        longitude = Number((prevStation.longitude + dLng * fraction).toFixed(6));
       }
     }
   }

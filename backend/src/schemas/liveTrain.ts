@@ -19,8 +19,8 @@ export type TrainStatus = z.infer<typeof trainStatusSchema>;
 export const stationPointSchema = z.object({
   code: z.string(),
   name: z.string(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
   scheduledArrival: z.string().nullable(),
   actualArrival: z.string().nullable(),
   scheduledDeparture: z.string().nullable(),

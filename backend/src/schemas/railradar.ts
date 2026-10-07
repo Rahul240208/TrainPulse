@@ -53,6 +53,8 @@ export const railRadarRouteStopSchema = z.object({
   platform: z.string().nullable().optional(),
   distance: z.number().optional(),
   speedToNextStationKmph: z.number().optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
 });
 
 export const railRadarLiveResponseSchema = z.object({

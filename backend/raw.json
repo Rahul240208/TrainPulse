@@ -1,0 +1,168 @@
+{
+  "data": {
+    "trainNumber": "22418",
+    "trainName": "Varanasi Mahamana Express",
+    "trainType": "Superfast Express",
+    "sourceStation": "New Delhi",
+    "sourceCode": "NDLS",
+    "destinationStation": "Varanasi",
+    "destinationCode": "BSB",
+    "status": "RUNNING",
+    "currentLocation": {
+      "name": "At Hapur",
+      "latitude": null,
+      "longitude": null,
+      "speedKmH": 56,
+      "positionType": "STATION_DEPARTURE"
+    },
+    "delayMinutes": 6,
+    "nextStation": {
+      "code": "MB",
+      "name": "Moradabad",
+      "scheduledArrival": "21:40",
+      "actualArrival": "22:18",
+      "delayMinutes": 38,
+      "platform": "1",
+      "distanceRemainingKm": 165.4
+    },
+    "platformInfo": {
+      "platformNumber": null,
+      "status": "UNAVAILABLE",
+      "station": {
+        "code": "HPU",
+        "name": "Hapur"
+      },
+      "updatedAt": "2026-10-07T20:06:12+05:30",
+      "source": "RAILRADAR"
+    },
+    "coachComposition": {
+      "trainNumber": "22418",
+      "available": false,
+      "totalCoaches": 0,
+      "coaches": [],
+      "updatedAt": "2026-10-07T20:06:12+05:30"
+    },
+    "lastUpdatedTime": "2026-10-07T20:06:12+05:30",
+    "stations": [
+      {
+        "code": "NDLS",
+        "name": "New Delhi",
+        "latitude": 28.6415,
+        "longitude": 77.2207,
+        "scheduledArrival": null,
+        "actualArrival": null,
+        "scheduledDeparture": "18:40",
+        "actualDeparture": null,
+        "delayMinutes": 0,
+        "platform": "9",
+        "hasDeparted": true
+      },
+      {
+        "code": "GZB",
+        "name": "Ghaziabad",
+        "latitude": 28.6508,
+        "longitude": 77.4262,
+        "scheduledArrival": "19:23",
+        "actualArrival": "19:22",
+        "scheduledDeparture": "19:25",
+        "actualDeparture": "19:37",
+        "delayMinutes": 13,
+        "platform": "2",
+        "hasDeparted": true
+      },
+      {
+        "code": "MB",
+        "name": "Moradabad",
+        "latitude": 28.8386,
+        "longitude": 78.7733,
+        "scheduledArrival": "21:40",
+        "actualArrival": "22:18",
+        "scheduledDeparture": "21:50",
+        "actualDeparture": "22:28",
+        "delayMinutes": 38,
+        "platform": "1",
+        "hasDeparted": false
+      },
+      {
+        "code": "BE",
+        "name": "Bareilly (NR)",
+        "latitude": 28.367,
+        "longitude": 79.4304,
+        "scheduledArrival": "23:05",
+        "actualArrival": "23:57",
+        "scheduledDeparture": "23:07",
+        "actualDeparture": "23:59",
+        "delayMinutes": 52,
+        "platform": "1",
+        "hasDeparted": false
+      },
+      {
+        "code": "LKO",
+        "name": "Lucknow Jn",
+        "latitude": 26.8335,
+        "longitude": 80.92,
+        "scheduledArrival": "03:05",
+        "actualArrival": "03:29",
+        "scheduledDeparture": "03:15",
+        "actualDeparture": "03:39",
+        "delayMinutes": 24,
+        "platform": "4",
+        "hasDeparted": false
+      },
+      {
+        "code": "NHH",
+        "name": "Nihalgarh",
+        "latitude": null,
+        "longitude": null,
+        "scheduledArrival": "04:31",
+        "actualArrival": "05:00",
+        "scheduledDeparture": "04:33",
+        "actualDeparture": "05:02",
+        "delayMinutes": 29,
+        "platform": "2",
+        "hasDeparted": false
+      },
+      {
+        "code": "SLN",
+        "name": "Sultanpur",
+        "latitude": 26.257,
+        "longitude": 82.0728,
+        "scheduledArrival": "05:11",
+        "actualArrival": "05:52",
+        "scheduledDeparture": "05:13",
+        "actualDeparture": "05:54",
+        "delayMinutes": 41,
+        "platform": "1",
+        "hasDeparted": false
+      },
+      {
+        "code": "JOP",
+        "name": "Jaunpur City",
+        "latitude": 25.7538,
+        "longitude": 82.6841,
+        "scheduledArrival": "06:16",
+        "actualArrival": "06:56",
+        "scheduledDeparture": "06:18",
+        "actualDeparture": "06:58",
+        "delayMinutes": 40,
+        "platform": "1",
+        "hasDeparted": false
+      },
+      {
+        "code": "BSB",
+        "name": "Varanasi",
+        "latitude": 25.334,
+        "longitude": 82.9739,
+        "scheduledArrival": "08:25",
+        "actualArrival": "07:55",
+        "scheduledDeparture": null,
+        "actualDeparture": null,
+        "delayMinutes": -30,
+        "platform": "8",
+        "hasDeparted": false
+      }
+    ]
+  },
+  "cached": false,
+  "isStale": false
+}

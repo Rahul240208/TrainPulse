@@ -20,7 +20,11 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
     }
     return data;
   }, [train, isStale]);
+  
   const activeTrainNumberRef = useRef<string>(normalizedData.trainNumber);
+  const activeCoordsRef = useRef<boolean>(normalizedData.hasExactCoordinates);
+  const activeStationsCountRef = useRef<number>(normalizedData.stations.length);
+  
   const [initialHtml, setInitialHtml] = useState<string>(() =>
     generateLeafletHtml(normalizedData)
   );
@@ -44,8 +48,14 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
 
   // Send smooth telemetry updates via postMessage when train data refreshes
   useEffect(() => {
-    if (normalizedData.trainNumber !== activeTrainNumberRef.current) {
+    const isNewTrain = normalizedData.trainNumber !== activeTrainNumberRef.current;
+    const gainedCoords = !activeCoordsRef.current && normalizedData.hasExactCoordinates;
+    const gainedStations = activeStationsCountRef.current === 0 && normalizedData.stations.length > 0;
+
+    if (isNewTrain || gainedCoords || gainedStations) {
       activeTrainNumberRef.current = normalizedData.trainNumber;
+      activeCoordsRef.current = normalizedData.hasExactCoordinates;
+      activeStationsCountRef.current = normalizedData.stations.length;
       setInitialHtml(generateLeafletHtml(normalizedData));
     } else {
       // Telemetry update for same train: dispatch message for smooth marker transition

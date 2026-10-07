@@ -121,8 +121,8 @@ export function normalizeMapData(train: LiveTrainData | MockTrain): NormalizedMa
       return {
         code: s.code,
         name: s.name,
-        latitude: s.latitude,
-        longitude: s.longitude,
+        latitude: s.latitude as number,
+        longitude: s.longitude as number,
         hasDeparted: s.hasDeparted,
         scheduledArrival: s.scheduledArrival,
         actualArrival: s.actualArrival,

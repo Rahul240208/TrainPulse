@@ -160,6 +160,9 @@ describe('Transformer Service & Truthful Telemetry', () => {
 
       // Strict canonical schema check
       const validation = liveTrainDataSchema.safeParse(result);
+      if (!validation.success) {
+        console.error(JSON.stringify(validation.error.format(), null, 2));
+      }
       expect(validation.success).toBe(true);
     });
   });

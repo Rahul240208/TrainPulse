@@ -5,8 +5,8 @@ export type TrainStatus = 'RUNNING' | 'NOT_STARTED' | 'ARRIVED' | 'CANCELLED' | 
 export interface StationPoint {
   code: string;
   name: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   scheduledArrival: string | null;
   actualArrival: string | null;
   scheduledDeparture: string | null;
