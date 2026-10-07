@@ -23,6 +23,8 @@ import {
 import { TrainSummaryCard } from '../../components/train/TrainSummaryCard';
 import { JourneySearchCard } from '../../components/journey/JourneySearchCard';
 
+import { TrainPulseLogo } from '../../components/common/TrainPulseLogo';
+
 export default function HomeScreen() {
   const { theme, toggleTheme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
@@ -93,10 +95,7 @@ export default function HomeScreen() {
 
             {/* Logo & Tagline */}
             <View style={styles.brandContainer}>
-              <View style={styles.logoBadge}>
-                <Ionicons name="train" size={32} color={theme.colors.accent} />
-              </View>
-              <Text style={styles.brandTitle}>TrainPulse</Text>
+              <TrainPulseLogo width={180} height={40} />
               <Text style={styles.brandTagline}>
                 Live Indian Railway Tracking & Telemetry
               </Text>
@@ -345,27 +344,6 @@ const createStyles = (theme: any) => StyleSheet.create({
   brandContainer: {
     alignItems: 'center',
     marginVertical: theme.spacing.lg,
-  },
-  logoBadge: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: theme.colors.cardSecondary,
-    borderWidth: 2,
-    borderColor: theme.colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.sm,
-    shadowColor: theme.colors.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-  },
-  brandTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    letterSpacing: 0.5,
   },
   brandTagline: {
     fontSize: 13,
