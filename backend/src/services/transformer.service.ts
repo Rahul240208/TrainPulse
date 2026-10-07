@@ -193,6 +193,32 @@ export function transformRailRadarToTrainPulse(data: RailRadarData): LiveTrainDa
           fraction = Math.max(0, Math.min(1, (totalDist - rem) / totalDist));
         }
         
+        // Implement continuous time-based movement (smooth route tracking)
+        const prevDepStr = prevStation.actualDeparture || prevStation.scheduledDeparture;
+        const nextArrStr = nextStnObj.actualArrival || nextStnObj.scheduledArrival;
+        
+        if (prevDepStr && nextArrStr) {
+          const getMins = (str: string) => { const [h, m] = str.split(':').map(Number); return h * 60 + m; };
+          const prevDep = getMins(prevDepStr);
+          const nextArr = getMins(nextArrStr);
+          if (!isNaN(prevDep) && !isNaN(nextArr)) {
+            let travelMins = nextArr - prevDep;
+            if (travelMins < 0) travelMins += 24 * 60; // handle midnight
+            
+            const istDate = new Date(new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'}));
+            const currentMins = istDate.getHours() * 60 + istDate.getMinutes() + (istDate.getSeconds() / 60);
+            
+            let elapsedMins = currentMins - prevDep;
+            if (elapsedMins < 0) elapsedMins += 24 * 60;
+            
+            if (travelMins > 0) {
+              const timeFraction = Math.max(0, Math.min(1, elapsedMins / travelMins));
+              // Use 90% time-based for smooth continuous tracking, 10% distance-based to anchor it
+              fraction = rem != null ? (fraction * 0.1 + timeFraction * 0.9) : timeFraction;
+            }
+          }
+        }
+        
         latitude = Number((prevStation.latitude + dLat * fraction).toFixed(6));
         longitude = Number((prevStation.longitude + dLng * fraction).toFixed(6));
       }
