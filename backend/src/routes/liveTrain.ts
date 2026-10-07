@@ -91,10 +91,12 @@ liveTrainRouter.get('/:trainNumber/live', async (c) => {
 
   const trainNumber = validation.data;
   const forceRefresh = c.req.query('refresh') === 'true';
+  const startDay = c.req.query('startDay');
 
   // Fetch live telemetry from RailRadar with single-flight coalescing & configurable TTL cache
   const { data, cached, isStale } = await getLiveTrainTelemetry(trainNumber, {
     bypassCache: forceRefresh,
+    startDay
   });
 
   const cacheStatus = isStale ? 'STALE' : cached ? 'HIT' : 'MISS';

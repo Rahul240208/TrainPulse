@@ -16,6 +16,7 @@ import { ResponsiveContainer } from '../../components/common/ResponsiveContainer
 import { fetchTrainsBetween } from '../../services/api';
 import { ErrorCard } from '../../components/common/ErrorCard';
 import { TrainResultCard } from '../../components/journey/TrainResultCard';
+import { HorizontalCalendar } from '../../components/common/HorizontalCalendar';
 import type { TrainsBetweenResult, TrainBetweenItem } from '../../types/api';
 
 export default function TrainsBetweenScreen() {
@@ -37,6 +38,7 @@ export default function TrainsBetweenScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<{ message: string; code?: string; statusCode?: number } | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
 
   const loadTrains = useCallback(async (isPullToRefresh = false) => {
     if (!fromCode || !toCode) {
@@ -69,16 +71,17 @@ export default function TrainsBetweenScreen() {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [fromCode, toCode]);
+  }, [fromCode, toCode, selectedDate]); // Note: In future we could pass date to fetchTrainsBetween too
 
   useEffect(() => {
     loadTrains();
   }, [loadTrains]);
 
   const handleTrackTrain = (trainNumber: string) => {
+    // Navigate to the train tracking screen, and optionally pass startDay to track the specific train on that date
     router.push({
-      pathname: '/(tabs)/map',
-      params: { trainNumber },
+      pathname: '/train/[trainNumber]', // Redirecting to track train screen, which expects [trainNumber]
+      params: { trainNumber, startDay: selectedDate },
     } as any);
   };
 
@@ -114,6 +117,9 @@ export default function TrainsBetweenScreen() {
             <Ionicons name="refresh" size={20} color={theme.colors.textSecondary} />
           </TouchableOpacity>
         </View>
+
+        {/* Date Selection Widget */}
+        <HorizontalCalendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
 
         {/* Content Body */}
         {isLoading ? (

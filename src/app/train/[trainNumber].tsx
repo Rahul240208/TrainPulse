@@ -29,7 +29,7 @@ import { fetchTrainCoaches } from '../../services/api';
 import type { CoachComposition } from '../../types/api';
 
 export default function TrainDetailsScreen() {
-  const { trainNumber } = useLocalSearchParams<{ trainNumber: string }>();
+  const { trainNumber, startDay } = useLocalSearchParams<{ trainNumber: string; startDay?: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
@@ -46,7 +46,7 @@ export default function TrainDetailsScreen() {
     lastSuccessfulUpdate,
     refetch,
     clearBackgroundError,
-  } = useLiveTrain(trainNumber);
+  } = useLiveTrain(trainNumber, { startDay });
 
   // 2. Coach Data state (reusing existing data from train payload to avoid duplicate requests)
   const [coachData, setCoachData] = useState<CoachComposition | null>(null);

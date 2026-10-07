@@ -30,6 +30,7 @@ export class ApiError extends Error {
 export interface FetchLiveTrainOptions {
   timeoutMs?: number;
   signal?: AbortSignal;
+  startDay?: string;
 }
 
 /**
@@ -53,7 +54,11 @@ export async function fetchLiveTrain(
   const trainNumber = validation.data;
   const timeoutMs = options?.timeoutMs ?? 8000;
   const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}/api/v1/trains/${trainNumber}/live`;
+  let url = `${baseUrl}/api/v1/trains/${trainNumber}/live`;
+  
+  if (options?.startDay && options.startDay !== 'today') {
+    url += `?startDay=${encodeURIComponent(options.startDay)}`;
+  }
 
   // 2. Setup timeout controller
   const controller = new AbortController();

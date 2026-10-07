@@ -26,6 +26,7 @@ import { JourneySearchCard } from '../../components/journey/JourneySearchCard';
 export default function HomeScreen() {
 
   const [trainNumber, setTrainNumber] = useState('');
+  const [startDay, setStartDay] = useState<'yesterday' | 'today' | 'tomorrow'>('today');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>(INITIAL_RECENT_SEARCHES);
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function HomeScreen() {
       setRecentSearches([validatedNumber, ...recentSearches.slice(0, 4)]);
     }
 
-    router.push({ pathname: '/train/[trainNumber]', params: { trainNumber: validatedNumber } } as any);
+    router.push({ pathname: '/train/[trainNumber]', params: { trainNumber: validatedNumber, startDay } } as any);
   };
 
   const isValidLength = trainNumber.length === 5;
@@ -189,6 +190,32 @@ export default function HomeScreen() {
                     />
                   </TouchableOpacity>
                 )}
+              </View>
+
+              {/* Date Selector */}
+              <View style={styles.dateSelectorRow}>
+                {['yesterday', 'today', 'tomorrow'].map((day) => (
+                  <TouchableOpacity
+                    key={day}
+                    style={[
+                      styles.datePill,
+                      startDay === day && styles.datePillActive,
+                    ]}
+                    onPress={() => setStartDay(day as 'yesterday' | 'today' | 'tomorrow')}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: startDay === day }}
+                    accessibilityLabel={`Set start date to ${day}`}
+                  >
+                    <Text
+                      style={[
+                        styles.datePillText,
+                        startDay === day && styles.datePillTextActive,
+                      ]}
+                    >
+                      {day.charAt(0).toUpperCase() + day.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
 
               {errorMessage && (
@@ -429,6 +456,34 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     padding: theme.spacing.xs,
+  },
+  dateSelectorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: theme.spacing.md,
+  },
+  datePill: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: theme.borderRadius.full,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.cardSecondary,
+  },
+  datePillActive: {
+    backgroundColor: theme.colors.accentGlow,
+    borderColor: theme.colors.accent,
+  },
+  datePillText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: theme.colors.textMuted,
+  },
+  datePillTextActive: {
+    color: theme.colors.accent,
+    fontWeight: '700',
   },
   errorRow: {
     flexDirection: 'row',

@@ -19,6 +19,7 @@ import type { LiveTrainData } from '../schemas/liveTrain.js';
 export interface FetchLiveTrainOptions {
   bypassCache?: boolean;
   timeoutMs?: number;
+  startDay?: string;
 }
 
 /**
@@ -27,7 +28,8 @@ export interface FetchLiveTrainOptions {
  */
 export async function fetchFromRailRadarDirect(
   trainNumber: string,
-  timeoutMs = 8000
+  timeoutMs = 8000,
+  startDay?: string
 ): Promise<LiveTrainData> {
   const apiKey = config.RAILRADAR_API_KEY;
   const baseUrl = config.RAILRADAR_BASE_URL;
@@ -37,7 +39,11 @@ export async function fetchFromRailRadarDirect(
     return getMockTrainData(trainNumber);
   }
 
-  const endpoint = `${baseUrl.replace(/\/+$/, '')}/v1/trains/${trainNumber}/live`;
+  let endpoint = `${baseUrl.replace(/\/+$/, '')}/v1/trains/${trainNumber}/live`;
+  if (startDay && startDay !== 'today') {
+    endpoint += `?startDay=${encodeURIComponent(startDay)}`;
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -128,13 +134,16 @@ export async function getLiveTrainTelemetry(
   trainNumber: string,
   options?: FetchLiveTrainOptions
 ): Promise<{ data: LiveTrainData; cached: boolean; isStale?: boolean }> {
+  // Use a cache key that includes the startDay to avoid caching yesterday's train under today's key
+  const cacheKey = options?.startDay ? `${trainNumber}_${options.startDay}` : trainNumber;
+  
   if (options?.bypassCache) {
     try {
-      const data = await fetchFromRailRadarDirect(trainNumber, options.timeoutMs);
-      liveTrainCache.set(trainNumber, data);
+      const data = await fetchFromRailRadarDirect(trainNumber, options.timeoutMs, options.startDay);
+      liveTrainCache.set(cacheKey, data);
       return { data, cached: false, isStale: false };
     } catch (err) {
-      const lastData = liveTrainCache.getLastSuccessful(trainNumber);
+      const lastData = liveTrainCache.getLastSuccessful(cacheKey);
       if (lastData) {
         return { data: lastData, cached: true, isStale: true };
       }
@@ -142,8 +151,8 @@ export async function getLiveTrainTelemetry(
     }
   }
 
-  return liveTrainCache.getOrFetch(trainNumber, () =>
-    fetchFromRailRadarDirect(trainNumber, options?.timeoutMs)
+  return liveTrainCache.getOrFetch(cacheKey, () =>
+    fetchFromRailRadarDirect(trainNumber, options?.timeoutMs, options?.startDay)
   );
 }
 

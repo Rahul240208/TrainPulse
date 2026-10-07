@@ -4,7 +4,9 @@ import { fetchLiveTrain, ApiError } from '../services/api';
 import { PollingManager, type PollingManagerOptions } from '../services/pollingManager';
 import type { LiveTrainData } from '../types/api';
 
-export interface UseLiveTrainOptions extends PollingManagerOptions {}
+export interface UseLiveTrainOptions extends PollingManagerOptions {
+  startDay?: string;
+}
 
 export interface ApiErrorState {
   code: string;
@@ -63,7 +65,7 @@ export function useLiveTrain(
 
     const manager = new PollingManager(
       trainNumber,
-      (tNum, signal) => fetchLiveTrain(tNum, { signal }),
+      (tNum, signal) => fetchLiveTrain(tNum, { signal, startDay: options?.startDay }),
       {
         onData: (freshData) => {
           setData(freshData);
