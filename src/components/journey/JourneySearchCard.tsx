@@ -7,18 +7,8 @@ import { StationAutocompleteInput } from './StationAutocompleteInput';
 import type { StationSearchResult } from '../../types/api';
 
 export function JourneySearchCard() {
-  const [sourceStation, setSourceStation] = useState<StationSearchResult | null>({
-    code: 'CDG',
-    name: 'Chandigarh Junction',
-    city: 'Chandigarh',
-    state: 'Chandigarh',
-  });
-  const [destinationStation, setDestinationStation] = useState<StationSearchResult | null>({
-    code: 'NDLS',
-    name: 'New Delhi',
-    city: 'New Delhi',
-    state: 'Delhi',
-  });
+  const [sourceStation, setSourceStation] = useState<StationSearchResult | null>(null);
+  const [destinationStation, setDestinationStation] = useState<StationSearchResult | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const router = useRouter();

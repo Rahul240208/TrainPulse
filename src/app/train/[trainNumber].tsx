@@ -347,7 +347,7 @@ export default function TrainDetailsScreen() {
           <Text style={styles.mapSectionTitle}>LIVE MAP</Text>
         </View>
         <TouchableOpacity
-          onPress={() => router.push('/(tabs)/map' as any)}
+          onPress={() => router.push({ pathname: '/(tabs)/map', params: { trainNumber: train.trainNumber } } as any)}
           style={styles.expandMapBtn}
           accessibilityRole="button"
           accessibilityLabel="Open full live map"
