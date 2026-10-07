@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import type { PlatformInfo, PlatformStatus } from '../../types/api';
 
 export interface PlatformCardProps {
@@ -60,6 +60,8 @@ export const PlatformCard: React.FC<PlatformCardProps> = ({
   currentStationName,
   nextStationName,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const status: PlatformStatus = platformInfo?.status || 'UNKNOWN';
   const hasPlatform = !!platformInfo?.platformNumber && status !== 'UNAVAILABLE' && status !== 'UNKNOWN';
 
@@ -147,7 +149,7 @@ export const PlatformCard: React.FC<PlatformCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

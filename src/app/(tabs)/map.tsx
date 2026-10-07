@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 import { MOCK_TRAINS, type MockTrain } from '../../data/mockTrains';
 import { LiveTrainMap } from '../../components/map/LiveTrainMap';
@@ -28,6 +28,8 @@ import type { LiveTrainData, PlatformInfo, CoachComposition, StationPoint } from
 const RECENT_SEARCHES_STORAGE_KEY = 'trainpulse_recent_searches_v1';
 
 export default function LiveMapScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const { trainNumber: paramTrainNumber } = useLocalSearchParams<{ trainNumber?: string }>();
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
@@ -535,7 +537,7 @@ export default function LiveMapScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,

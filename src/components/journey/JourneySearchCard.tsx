@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { StationAutocompleteInput } from './StationAutocompleteInput';
 import type { StationSearchResult } from '../../types/api';
 
 export function JourneySearchCard() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [sourceStation, setSourceStation] = useState<StationSearchResult | null>(null);
   const [destinationStation, setDestinationStation] = useState<StationSearchResult | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -133,7 +135,7 @@ export function JourneySearchCard() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

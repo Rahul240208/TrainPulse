@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import type { CoachComposition, CoachType } from '../../types/api';
 import { getSavedCoach, saveCoach, clearSavedCoach } from '../../utils/coachStorage';
 
@@ -49,6 +49,8 @@ function getCoachColor(type: CoachType) {
 }
 
 export const CoachLayout: React.FC<CoachLayoutProps> = ({ composition, trainNumber }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [selectedCoach, setSelectedCoach] = useState<string | null>(null);
   const [inputQuery, setInputQuery] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
@@ -299,7 +301,7 @@ export const CoachLayout: React.FC<CoachLayoutProps> = ({ composition, trainNumb
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

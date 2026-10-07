@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { NextStation, TrainStatus } from '../../types/api';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface NextStationCardProps {
   nextStation: NextStation | null;
@@ -17,6 +17,8 @@ export const NextStationCard: React.FC<NextStationCardProps> = ({
   sourceStation,
   destinationStation,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   if (!nextStation) {
     let iconName: any = 'information-circle-outline';
     let iconColor = theme.colors.neutral;
@@ -132,7 +134,7 @@ export const NextStationCard: React.FC<NextStationCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

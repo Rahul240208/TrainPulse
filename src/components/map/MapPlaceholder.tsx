@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { MockTrain } from '../../data/mockTrains';
 import type { LiveTrainData } from '../../types/api';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { PositionBadge } from '../common/PositionBadge';
 
 interface MapPlaceholderProps {
@@ -17,6 +17,8 @@ export const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
   height = 320,
   showDetailsOverlay = true,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const speedDisplay = train
     ? 'speed' in train
       ? `${(train as MockTrain).speed} km/h`
@@ -110,7 +112,7 @@ export const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     backgroundColor: '#070B14',
     borderRadius: theme.borderRadius.lg,

@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 
 export default function AboutScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ResponsiveContainer>
@@ -204,7 +206,7 @@ export default function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,

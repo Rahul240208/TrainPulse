@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { normalizeMapData, type LiveTrainMapProps } from './types';
 import { generateLeafletHtml } from './leafletTemplate';
 import { MapTruthfulBanner } from './MapTruthfulBanner';
@@ -12,6 +12,8 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
   focusStationCode,
   isStale,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const normalizedData = useMemo(() => {
     const data = normalizeMapData(train);
@@ -95,7 +97,7 @@ export const LiveTrainMap: React.FC<LiveTrainMapProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     backgroundColor: '#070B14',
     borderRadius: theme.borderRadius.lg,

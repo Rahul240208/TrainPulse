@@ -47,3 +47,35 @@ export const theme = {
   },
 };
 
+export const lightColors = {
+  background: '#F1F5F9', // Slate 100
+  cardBackground: '#FFFFFF',
+  cardSecondary: '#F8FAFC', // Slate 50
+  border: '#E2E8F0', // Slate 200
+  borderSubtle: '#F1F5F9',
+  
+  textPrimary: '#0F172A', // Slate 900
+  textSecondary: '#475569', // Slate 600
+  textMuted: '#64748B', // Slate 500
+  
+  accent: '#0284C7', // Light sky blue accent
+  accentHover: '#0369A1',
+  accentGlow: 'rgba(2, 132, 199, 0.1)',
+  
+  onTime: '#059669', // Emerald 600
+  onTimeBackground: 'rgba(5, 150, 105, 0.12)',
+  delayed: '#DC2626', // Red 600
+  delayedBackground: 'rgba(220, 38, 38, 0.12)',
+  warning: '#D97706', // Amber 600
+  warningBackground: 'rgba(217, 119, 6, 0.12)',
+  neutral: '#475569',
+  neutralBackground: 'rgba(71, 85, 105, 0.12)',
+  
+  gpsLive: '#059669',
+  gpsLiveBg: 'rgba(5, 150, 105, 0.15)',
+  estimated: '#D97706',
+  estimatedBg: 'rgba(217, 119, 6, 0.15)',
+  stationFixed: '#0284C7',
+  stationFixedBg: 'rgba(2, 132, 199, 0.15)',
+};
+

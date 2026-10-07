@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { PositionAccuracy } from '../../types/api';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 export type TruthfulLocationType =
   | PositionAccuracy
@@ -23,6 +23,8 @@ export const PositionBadge: React.FC<PositionBadgeProps> = ({
   isUnavailable = false,
   showExplanation = false,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const getConfig = () => {
     // 1. Unavailable Location State
     if (isUnavailable || positionType === 'UNAVAILABLE') {
@@ -92,7 +94,7 @@ export const PositionBadge: React.FC<PositionBadgeProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     alignItems: 'flex-start',
   },

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 export interface HorizontalCalendarProps {
   selectedDate: string; // YYYY-MM-DD
@@ -9,6 +9,8 @@ export interface HorizontalCalendarProps {
 }
 
 export function HorizontalCalendar({ selectedDate, onSelectDate, daysRange = 7 }: HorizontalCalendarProps) {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const dates = useMemo(() => {
     const arr = [];
     const today = new Date();
@@ -67,7 +69,7 @@ export function HorizontalCalendar({ selectedDate, onSelectDate, daysRange = 7 }
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     marginBottom: theme.spacing.md,
   },

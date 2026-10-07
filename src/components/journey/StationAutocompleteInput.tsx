@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { useDebounce } from '../../hooks/useDebounce';
 import { searchStationsApi } from '../../services/api';
 import type { StationSearchResult } from '../../types/api';
@@ -32,6 +32,8 @@ export function StationAutocompleteInput({
   iconName = 'location-outline',
   isError = false,
 }: StationAutocompleteInputProps) {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [inputText, setInputText] = useState(
     selectedStation ? `${selectedStation.name} (${selectedStation.code})` : ''
   );
@@ -236,7 +238,7 @@ export function StationAutocompleteInput({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     marginBottom: theme.spacing.sm,
     position: 'relative',

@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface LoadingCardProps {
   trainNumber?: string;
 }
 
 export const LoadingCard: React.FC<LoadingCardProps> = ({ trainNumber }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export const LoadingCard: React.FC<LoadingCardProps> = ({ trainNumber }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     padding: theme.spacing.xl,
     alignItems: 'center',

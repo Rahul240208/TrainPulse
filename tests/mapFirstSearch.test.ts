@@ -1,6 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { getStatusPresentation, MapStatusPanel } from '../src/components/map/MapStatusPanel';
+
+const mockTheme = {
+  colors: {
+    accent: '#38BDF8',
+    onTime: '#10B981',
+    delayed: '#EF4444',
+    textMuted: '#94A3B8',
+  }
+};
+
 import type { LiveTrainData } from '../src/types/api';
 
 vi.mock('expo-router', () => ({
@@ -74,43 +84,43 @@ const mockTrain: LiveTrainData = {
 describe('Milestone 11: Map-First Train Search & Status Panel', () => {
   describe('Status Presentation Utility', () => {
     it('1. formats running on-time status correctly', () => {
-      const pres = getStatusPresentation('RUNNING', 0);
+      const pres = getStatusPresentation(mockTheme, 'RUNNING', 0);
       expect(pres.label).toBe('Running • On Time');
       expect(pres.icon).toBe('radio-button-on');
     });
 
     it('2. formats running delayed status correctly', () => {
-      const pres = getStatusPresentation('RUNNING', 15);
+      const pres = getStatusPresentation(mockTheme, 'RUNNING', 15);
       expect(pres.label).toBe('Running • 15m late');
       expect(pres.icon).toBe('alert-circle');
     });
 
     it('3. formats cancelled status with red indicator', () => {
-      const pres = getStatusPresentation('CANCELLED', 0);
+      const pres = getStatusPresentation(mockTheme, 'CANCELLED', 0);
       expect(pres.label).toBe('Cancelled');
       expect(pres.icon).toBe('close-circle');
     });
 
     it('4. formats diverted status with amber indicator', () => {
-      const pres = getStatusPresentation('DIVERTED', 0);
+      const pres = getStatusPresentation(mockTheme, 'DIVERTED', 0);
       expect(pres.label).toBe('Diverted');
       expect(pres.icon).toBe('git-branch');
     });
 
     it('5. formats not started status', () => {
-      const pres = getStatusPresentation('NOT_STARTED', 0);
+      const pres = getStatusPresentation(mockTheme, 'NOT_STARTED', 0);
       expect(pres.label).toBe('Not Started');
       expect(pres.icon).toBe('time');
     });
 
     it('6. formats arrived / completed status', () => {
-      const pres = getStatusPresentation('ARRIVED', 0);
+      const pres = getStatusPresentation(mockTheme, 'ARRIVED', 0);
       expect(pres.label).toBe('Completed');
       expect(pres.icon).toBe('checkmark-circle');
     });
 
     it('7. falls back safely on unknown status', () => {
-      const pres = getStatusPresentation(null, 0);
+      const pres = getStatusPresentation(mockTheme, null, 0);
       expect(pres.label).toBe('Unknown Status');
     });
   });

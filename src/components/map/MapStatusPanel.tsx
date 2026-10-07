@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import type { LiveTrainData } from '../../types/api';
 import type { MockTrain } from '../../data/mockTrains';
 
@@ -46,6 +46,7 @@ export interface StatusPresentation {
  * - Unknown
  */
 export function getStatusPresentation(
+  theme: any,
   status?: string | null,
   delayMinutes?: number | null
 ): StatusPresentation {
@@ -148,6 +149,8 @@ export const MapStatusPanel: React.FC<MapStatusPanelProps> = ({
   lastSuccessfulUpdate = null,
   onRefresh,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const router = useRouter();
 
   if (isLoading && !train) {
@@ -229,7 +232,7 @@ export const MapStatusPanel: React.FC<MapStatusPanelProps> = ({
     ? lastUpdatedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : 'Not available';
 
-  const statusPres = getStatusPresentation(train.status, delayMinutes);
+  const statusPres = getStatusPresentation(theme, train.status, delayMinutes);
 
   const hasRefreshIssue = isStale || Boolean(backgroundError);
 
@@ -379,7 +382,7 @@ export const MapStatusPanel: React.FC<MapStatusPanelProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

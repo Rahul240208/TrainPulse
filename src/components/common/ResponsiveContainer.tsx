@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Platform, type ViewProps } from 'react-native';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface ResponsiveContainerProps extends ViewProps {
   children: React.ReactNode;
@@ -13,6 +13,8 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   style,
   ...rest
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   return (
     <View style={styles.outer}>
       <View style={[styles.inner, { maxWidth }, style]} {...rest}>
@@ -22,7 +24,7 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   outer: {
     flex: 1,
     width: '100%',

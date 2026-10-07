@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 import { trainNumberSchema } from '../../shared/trainNumber';
 import {
@@ -24,6 +24,8 @@ import { TrainSummaryCard } from '../../components/train/TrainSummaryCard';
 import { JourneySearchCard } from '../../components/journey/JourneySearchCard';
 
 export default function HomeScreen() {
+  const { theme, toggleTheme, isDarkMode } = useTheme();
+  const styles = createStyles(theme);
 
   const [trainNumber, setTrainNumber] = useState('');
   const [startDay, setStartDay] = useState<'yesterday' | 'today' | 'tomorrow'>('today');
@@ -77,6 +79,18 @@ export default function HomeScreen() {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
+            {/* Top Controls */}
+            <View style={styles.topControls}>
+              <TouchableOpacity
+                onPress={toggleTheme}
+                style={styles.themeToggleBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Toggle dark/light mode"
+              >
+                <Ionicons name={isDarkMode ? 'sunny' : 'moon'} size={24} color={theme.colors.textPrimary} />
+              </TouchableOpacity>
+            </View>
+
             {/* Logo & Tagline */}
             <View style={styles.brandContainer}>
               <View style={styles.logoBadge}>
@@ -304,7 +318,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -315,6 +329,18 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: theme.spacing.lg,
     paddingBottom: theme.spacing.xl,
+  },
+  topControls: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  themeToggleBtn: {
+    padding: theme.spacing.sm,
+    backgroundColor: theme.colors.cardSecondary,
+    borderRadius: theme.borderRadius.full,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   brandContainer: {
     alignItems: 'center',

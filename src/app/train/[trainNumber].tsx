@@ -12,7 +12,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 import { useLiveTrain } from '../../hooks/useLiveTrain';
 import { LIVE_REFRESH_SECONDS } from '../../config/tracking';
@@ -29,6 +29,8 @@ import { fetchTrainCoaches } from '../../services/api';
 import type { CoachComposition } from '../../types/api';
 
 export default function TrainDetailsScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const { trainNumber, startDay } = useLocalSearchParams<{ trainNumber: string; startDay?: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -468,7 +470,7 @@ export default function TrainDetailsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 import { MOCK_TRAINS } from '../../data/mockTrains';
 import { TrainSummaryCard } from '../../components/train/TrainSummaryCard';
@@ -19,6 +19,8 @@ import { TrainSummaryCard } from '../../components/train/TrainSummaryCard';
 const FILTER_TAGS = ['All', 'Rajdhani', 'Shatabdi', 'Vande Bharat', 'On Time', 'Delayed'];
 
 export default function SearchScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
 
@@ -144,7 +146,7 @@ export default function SearchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,

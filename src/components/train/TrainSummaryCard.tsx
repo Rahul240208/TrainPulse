@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import type { MockTrain } from '../../data/mockTrains';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { StatusPill } from '../common/StatusPill';
 
 interface TrainSummaryCardProps {
@@ -11,6 +11,8 @@ interface TrainSummaryCardProps {
 }
 
 export const TrainSummaryCard: React.FC<TrainSummaryCardProps> = ({ train }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const router = useRouter();
 
   return (
@@ -64,7 +66,7 @@ export const TrainSummaryCard: React.FC<TrainSummaryCardProps> = ({ train }) => 
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

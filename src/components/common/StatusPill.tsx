@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import type { TrainStatus } from '../../types/api';
 
 export type StatusType = TrainStatus | 'ON_TIME' | 'DELAYED';
@@ -16,6 +16,8 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   delayMinutes,
   size = 'medium',
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const getConfig = () => {
     switch (status) {
       case 'RUNNING':
@@ -116,7 +118,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   pill: {
     flexDirection: 'row',
     alignItems: 'center',

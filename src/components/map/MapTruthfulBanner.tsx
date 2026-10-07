@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { PositionBadge } from '../common/PositionBadge';
 import type { NormalizedMapData } from './types';
 
@@ -10,6 +10,8 @@ interface MapTruthfulBannerProps {
 }
 
 export const MapTruthfulBanner: React.FC<MapTruthfulBannerProps> = ({ data }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const isDelayed = data.delayMinutes > 0;
 
   return (
@@ -44,7 +46,7 @@ export const MapTruthfulBanner: React.FC<MapTruthfulBannerProps> = ({ data }) =>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     position: 'absolute',
     top: 10,

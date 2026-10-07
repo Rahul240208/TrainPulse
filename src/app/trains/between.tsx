@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { ResponsiveContainer } from '../../components/common/ResponsiveContainer';
 import { fetchTrainsBetween } from '../../services/api';
 import { ErrorCard } from '../../components/common/ErrorCard';
@@ -20,6 +20,8 @@ import { HorizontalCalendar } from '../../components/common/HorizontalCalendar';
 import type { TrainsBetweenResult, TrainBetweenItem } from '../../types/api';
 
 export default function TrainsBetweenScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const params = useLocalSearchParams<{
     from?: string;
     to?: string;
@@ -197,7 +199,7 @@ export default function TrainsBetweenScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: theme.colors.background,

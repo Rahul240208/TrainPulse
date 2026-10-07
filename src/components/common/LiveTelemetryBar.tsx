@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface LiveTelemetryBarProps {
   isRefreshing: boolean;
@@ -24,6 +24,8 @@ export const LiveTelemetryBar: React.FC<LiveTelemetryBarProps> = ({
   onRetry,
   onDismissError,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const isDataOutdated = isStale || Boolean(backgroundError);
 
@@ -129,7 +131,7 @@ export const LiveTelemetryBar: React.FC<LiveTelemetryBarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   wrapper: {
     marginBottom: theme.spacing.sm,
   },

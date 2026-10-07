@@ -2,12 +2,15 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme } from '../theme';
+import { useTheme } from '../theme/ThemeProvider';
 
-export default function RootLayout() {
+import { ThemeProvider } from '../theme/ThemeProvider';
+
+function AppContent() {
+  const { theme, isDarkMode } = useTheme();
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" />
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
       <Stack
         screenOptions={{
           headerStyle: {
@@ -39,5 +42,13 @@ export default function RootLayout() {
         />
       </Stack>
     </SafeAreaProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }

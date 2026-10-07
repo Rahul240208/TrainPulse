@@ -1,6 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { getStatusPresentation, MapStatusPanel } from '../src/components/map/MapStatusPanel';
+
+const mockTheme = {
+  colors: {
+    accent: '#38BDF8',
+    onTime: '#10B981',
+    delayed: '#EF4444',
+    textMuted: '#94A3B8',
+  }
+};
+
 import type { LiveTrainData } from '../src/types/api';
 
 const mockPush = vi.fn();
@@ -67,67 +77,67 @@ const baseTrain: LiveTrainData = {
 describe('Milestone 13: Live Train Status Panel', () => {
   describe('Status States Matrix (All 8 Required States)', () => {
     it('1. formats Running state on-time', () => {
-      const pres = getStatusPresentation('RUNNING', 0);
+      const pres = getStatusPresentation(mockTheme, 'RUNNING', 0);
       expect(pres.category).toBe('RUNNING');
       expect(pres.label).toBe('Running • On Time');
       expect(pres.icon).toBe('radio-button-on');
     });
 
     it('2. formats Running state delayed', () => {
-      const pres = getStatusPresentation('RUNNING', 12);
+      const pres = getStatusPresentation(mockTheme, 'RUNNING', 12);
       expect(pres.category).toBe('RUNNING');
       expect(pres.label).toBe('Running • 12m late');
       expect(pres.icon).toBe('alert-circle');
     });
 
     it('3. formats On Time state explicitly', () => {
-      const pres = getStatusPresentation('ON_TIME', 0);
+      const pres = getStatusPresentation(mockTheme, 'ON_TIME', 0);
       expect(pres.category).toBe('ON_TIME');
       expect(pres.label).toBe('On Time');
       expect(pres.icon).toBe('radio-button-on');
     });
 
     it('4. formats Delayed state', () => {
-      const pres = getStatusPresentation('DELAYED', 25);
+      const pres = getStatusPresentation(mockTheme, 'DELAYED', 25);
       expect(pres.category).toBe('DELAYED');
       expect(pres.label).toBe('Delayed (25 min)');
       expect(pres.icon).toBe('alert-circle');
     });
 
     it('5. formats Not Started state', () => {
-      const pres = getStatusPresentation('NOT_STARTED', 0);
+      const pres = getStatusPresentation(mockTheme, 'NOT_STARTED', 0);
       expect(pres.category).toBe('NOT_STARTED');
       expect(pres.label).toBe('Not Started');
       expect(pres.icon).toBe('time');
     });
 
     it('6. formats Completed / Arrived state', () => {
-      const pres = getStatusPresentation('COMPLETED', 0);
+      const pres = getStatusPresentation(mockTheme, 'COMPLETED', 0);
       expect(pres.category).toBe('COMPLETED');
       expect(pres.label).toBe('Completed');
       expect(pres.icon).toBe('checkmark-circle');
 
-      const presArrived = getStatusPresentation('ARRIVED', 0);
+      const presArrived = getStatusPresentation(mockTheme, 'ARRIVED', 0);
       expect(presArrived.category).toBe('COMPLETED');
       expect(presArrived.label).toBe('Completed');
     });
 
     it('7. formats Cancelled state', () => {
-      const pres = getStatusPresentation('CANCELLED', 0);
+      const pres = getStatusPresentation(mockTheme, 'CANCELLED', 0);
       expect(pres.category).toBe('CANCELLED');
       expect(pres.label).toBe('Cancelled');
       expect(pres.icon).toBe('close-circle');
     });
 
     it('8. formats Diverted state', () => {
-      const pres = getStatusPresentation('DIVERTED', 0);
+      const pres = getStatusPresentation(mockTheme, 'DIVERTED', 0);
       expect(pres.category).toBe('DIVERTED');
       expect(pres.label).toBe('Diverted');
       expect(pres.icon).toBe('git-branch');
     });
 
     it('9. formats Unknown state safely', () => {
-      const pres = getStatusPresentation(null, null);
+      const pres = getStatusPresentation(mockTheme, null, null);
       expect(pres.category).toBe('UNKNOWN');
       expect(pres.label).toBe('Unknown Status');
       expect(pres.icon).toBe('help-circle');

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import type { TrainBetweenItem } from '../../types/api';
 import { formatPlatformDisplay } from '../train/PlatformCard';
 
@@ -126,6 +126,8 @@ export function formatTime(time?: string | null): string {
 }
 
 export const TrainResultCard: React.FC<TrainResultCardProps> = ({ train, onTrack }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const departureTime = formatTime(train.departure);
   const arrivalTime = formatTime(train.arrival);
   const durationText = formatDuration(train.duration);
@@ -285,7 +287,7 @@ export const TrainResultCard: React.FC<TrainResultCardProps> = ({ train, onTrack
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

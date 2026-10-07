@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { StationPoint } from '../../types/api';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface StationTimelineProps {
   stations: StationPoint[];
 }
 
 export const StationTimeline: React.FC<StationTimelineProps> = ({ stations }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!stations || stations.length === 0) return null;
@@ -148,7 +150,7 @@ export const StationTimeline: React.FC<StationTimelineProps> = ({ stations }) =>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     backgroundColor: theme.colors.cardBackground,
     borderRadius: theme.borderRadius.lg,

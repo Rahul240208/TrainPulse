@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface ErrorCardProps {
   code?: string;
@@ -18,6 +18,8 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({
   onRetry,
   onBack,
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const isInvalidNumber = code === 'INVALID_TRAIN_NUMBER' || statusCode === 400;
   const isNotFound = code === 'TRAIN_NOT_FOUND' || statusCode === 404;
   const isTimeout = code === 'TIMEOUT' || code === 'UPSTREAM_TIMEOUT' || statusCode === 504;
@@ -97,7 +99,7 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     padding: theme.spacing.xl,
     alignItems: 'center',

@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../theme';
+import { useTheme } from '../../theme/ThemeProvider';
 import { searchGlobal } from '../../services/api';
 import type { SearchResultItem } from '../../types/api';
 
@@ -29,6 +29,8 @@ export const MapSearchBar: React.FC<MapSearchBarProps> = ({
   recentSearches = ['12046', '12301', '12002', 'NDLS'],
   placeholder = 'Search train number, name, or station...',
 }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -293,7 +295,7 @@ export const MapSearchBar: React.FC<MapSearchBarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     width: '100%',
     position: 'relative',
