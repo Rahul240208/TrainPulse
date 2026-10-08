@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TrainPulse — Project Presentation</title>
+<style>
+  :root{
+    --cyan:#22D3EE; --cyan-ink:#0891B2; --navy:#0B1B2E; --black:#070D18;
+    --amber:#FFB020; --slate:#64748B; --cloud:#F1F5F9;
+    --ok:#22C55E; --delay:#F59E0B; --bad:#EF4444;
+    --card:rgba(255,255,255,.04); --border:rgba(34,211,238,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--black); color:var(--cloud);
+    font-family:'Segoe UI',Inter,system-ui,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .deck{scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh}
+  .slide{
+    scroll-snap-align:start; min-height:100vh; width:100%;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:7vh 9vw; position:relative;
+    background:
+      radial-gradient(1200px 600px at 85% 10%, rgba(34,211,238,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 90%, rgba(255,176,32,.07), transparent 60%),
+      linear-gradient(180deg,#070D18 0%, #0B1B2E 100%);
+    border-bottom:1px solid rgba(255,255,255,.04);
+  }
+  .kicker{color:var(--cyan); font-weight:700; letter-spacing:.22em;
+    text-transform:uppercase; font-size:.8rem; margin-bottom:1rem}
+  h1{font-size:clamp(2.4rem,6vw,5rem); line-height:1.02; font-weight:800; letter-spacing:-.02em}
+  h1 .pulse{color:var(--cyan)}
+  h2{font-size:clamp(1.8rem,3.6vw,3rem); font-weight:800; letter-spacing:-.01em; margin-bottom:.4em}
+  h2 .bar{display:inline-block;width:.5em;height:.5em;background:var(--amber);
+    border-radius:2px;margin-right:.5rem;vertical-align:middle}
+  .sub{color:#aab6c6; font-size:clamp(1rem,1.6vw,1.4rem); max-width:60ch; line-height:1.5; margin-top:1rem}
+  .pagenum{position:absolute; bottom:3vh; right:9vw; color:var(--slate); font-size:.8rem;
+    font-family:'JetBrains Mono',monospace}
+  .pagenum b{color:var(--cyan)}
+  .brandfoot{position:absolute; bottom:3vh; left:9vw; color:var(--slate); font-size:.8rem;
+    letter-spacing:.12em; text-transform:uppercase}
+  .grid{display:grid; gap:1.1rem; margin-top:2rem}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:1.4rem 1.5rem; backdrop-filter:blur(4px)}
+  .card h3{font-size:1.15rem; margin-bottom:.5rem; display:flex; align-items:center; gap:.6rem}
+  .card p{color:#9fb0c2; font-size:.95rem; line-height:1.45}
+  .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    background:rgba(34,211,238,.12); border:1px solid var(--border); font-size:1.1rem; flex:none}
+  .amberico{background:rgba(255,176,32,.12); border-color:rgba(255,176,32,.3)}
+  .stat{font-size:clamp(2rem,4vw,3.4rem); font-weight:800; color:var(--cyan); line-height:1}
+  .stat.amber{color:var(--amber)}
+  .statlbl{color:#9fb0c2; margin-top:.5rem; font-size:.95rem}
+  ul.clean{list-style:none; margin-top:1.4rem; display:grid; gap:.9rem; max-width:70ch}
+  ul.clean li{display:flex; gap:.9rem; align-items:flex-start; font-size:1.08rem; color:#cdd8e4; line-height:1.4}
+  ul.clean li::before{content:""; width:9px;height:9px;border-radius:50%;background:var(--cyan);
+    margin-top:.5rem; flex:none; box-shadow:0 0 10px var(--cyan)}
+  ul.clean li.amber::before{background:var(--amber); box-shadow:0 0 10px var(--amber)}
+  .flow{display:flex; flex-wrap:wrap; align-items:center; gap:.6rem; margin-top:2rem}
+  .node{background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:.9rem 1.1rem; font-weight:600; font-size:.95rem}
+  .node small{display:block; color:var(--slate); font-weight:400; font-size:.78rem; margin-top:.2rem}
+  .node.up{border-color:rgba(255,176,32,.35)}
+  .arrow{color:var(--cyan); font-size:1.5rem}
+  .tag{display:inline-block; padding:.25rem .7rem; border-radius:999px; font-size:.78rem;
+    font-weight:600; margin:.2rem .3rem .2rem 0; border:1px solid var(--border);
+    background:rgba(34,211,238,.08); color:#bfeefb}
+  .mono{font-family:'JetBrains Mono','Courier New',monospace}
+  .pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:700;
+    padding:.3rem .7rem;border-radius:999px}
+  .pill.ok{background:rgba(34,197,94,.15);color:#86efac}
+  .pill.warn{background:rgba(245,158,11,.15);color:#fcd34d}
+  .pill.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+  table{width:100%; border-collapse:collapse; margin-top:1.6rem; font-size:1rem}
+  td,th{text-align:left; padding:.85rem 1rem; border-bottom:1px solid rgba(255,255,255,.07)}
+  th{color:var(--cyan); font-size:.8rem; letter-spacing:.08em; text-transform:uppercase}
+  td.layer{font-weight:700; color:var(--cloud)}
+  .hint{position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+    color:var(--slate); font-size:.75rem; letter-spacing:.1em; z-index:50;
+    background:rgba(7,13,24,.7); padding:.4rem .9rem; border-radius:999px; border:1px solid rgba(255,255,255,.08)}
+  .logo{display:flex;align-items:center;gap:.7rem;font-weight:800;font-size:1.1rem;letter-spacing:-.01em}
+  .logo svg{width:40px;height:40px}
+  @media print{
+    .hint{display:none}
+    .deck{height:auto;overflow:visible}
+    .slide{min-height:100vh;page-break-after:always}
+  }
+  @media (max-width:720px){
+    .g2,.g3,.g4{grid-template-columns:1fr}
+    .slide{padding:6vh 7vw}
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1. TITLE -->
+  <section class="slide">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M4 28 h7 l4-12 6 24 5-18 4 12 h14" stroke="#22D3EE" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="40" cy="28" r="4" fill="#FFB020"/>
+      </svg>
+      <span>Train<span style="color:var(--cyan)">Pulse</span></span>
+    </div>
+    <div style="margin-top:5vh">
+      <div class="kicker">Real-Time Railway Tracking</div>
+      <h1>Train<span class="pulse">Pulse</span></h1>
+      <p class="sub">A cross-platform, map-first live train tracking companion for Indian Railways — engineered with strict TypeScript, Expo / React Native Web, and a secure Hono backend gateway.</p>
+      <div style="margin-top:2rem">
+        <span class="tag">Android</span><span class="tag">iOS</span><span class="tag">Web</span>
+        <span class="tag">TypeScript (strict)</span><span class="tag">Truthful Telemetry</span>
+      </div>
+    </div>
+    <div class="brandfoot">Project Analysis & Overview</div>
+    <div class="pagenum"><b>01</b> / 10</div>
+  </section>
+
+  <!-- 2. PROBLEM -->
+  <section class="slide">
+    <div class="kicker">The Problem</div>
+    <h2><span class="bar"></span>Railway apps are cluttered &amp; untrustworthy</h2>
+    <p class="sub">Most apps bury the one thing passengers actually want — <em>where is my train right now?</em> — under ticketing, PNR, ads, and plain text lists.</p>
+    <div class="grid g3">
+      <div class="card"><h3><span class="ico">🧩</span>Feature bloat</h3><p>Ticketing, PNR, seat maps and ads crowd out the core live-tracking use case.</p></div>
+      <div class="card"><h3><span class="ico">📄</span>No spatial awareness</h3><p>Location shown as textual lists instead of an intuitive, map-based view of the journey.</p></div>
+      <div class="card"><h3><span class="ico amberico">❓</span>Fabricated data</h3><p>Estimates are presented as fact — users can't tell a real GPS fix from a schedule guess.</p></div>
+    </div>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>02</b> / 10</div>
+  </section>
+
+  <!-- 3. SOLUTION -->
+  <section class="slide">
+    <div class="kicker">The Solution</div>
+    <h2><span class="bar"></span>A map-first, truthful live companion</h2>
+    <ul class="clean">
+      <li>A <b>map is the primary interface</b> — search bar overlaid directly on a live route map.</li>
+      <li class="amber"><b>Truthful telemetry:</b> every position is tagged <span class="mono">ACTUAL_GPS</span> vs <span class="mono">ESTIMATED_SCHEDULE</span> — never synthesized.</li>
+      <li>One codebase delivers <b>Android, iOS &amp; Web parity</b> via Expo + React Native Web.</li>
+      <li>Backend caching &amp; coalescing protect upstream quotas and keep loads sub-second.</li>
+      <li>System-aware <b>Dark / Light theming</b> using official TrainPulse brand colors.</li>
+    </ul>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>03</b> / 10</div>
+  </section>
+
+  <!-- 4. CORE FEATURES -->
+  <section class="slide">
+    <div class="kicker">Core Features</div>
+    <h2><span class="bar"></span>What TrainPulse does</h2>
+    <div class="grid g3">
+      <div class="card"><h3><span class="ico">🔍</span>Journey Search</h3><p>Where-to-where search between any two stations with debounced autocomplete.</p></div>
+      <div class="card"><h3><span class="ico">📡</span>Live Telemetry</h3><p>Status, speed, location, next halt, arrival/departure times and delay minutes.</p></div>
+      <div class="card"><h3><span class="ico">🗺️</span>Interactive Map</h3><p>OpenStreetMap + Leaflet route map on Web &amp; Mobile via WebView.</p></div>
+      <div class="card"><h3><span class="ico amberico">🚉</span>Platform Status</h3><p>Confirmed / Expected / Unavailable states with freshness timestamps.</p></div>
+      <div class="card"><h3><span class="ico">🚃</span>Coach &amp; My Coach</h3><p>Visual rake layout with a My Coach selector and offline persistence.</p></div>
+      <div class="card"><h3><span class="ico amberico">🛡️</span>Zero Fabrication</h3><p>Missing GPS is explicitly flagged, never invented.</p></div>
+    </div>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>04</b> / 10</div>
+  </section>
+
+  <!-- 5. ARCHITECTURE -->
+  <section class="slide">
+    <div class="kicker">Architecture</div>
+    <h2><span class="bar"></span>Decoupled client ↔ secure gateway</h2>
+    <p class="sub">A zero-secret frontend talks only to the TrainPulse backend. Upstream credentials stay server-side.</p>
+    <div class="flow">
+      <div class="node">📱 Client<small>Expo / RN Web + Zustand</small></div>
+      <span class="arrow">→</span>
+      <div class="node">⚙️ Hono Gateway<small>/api/v1 · Zod validation</small></div>
+      <span class="arrow">→</span>
+      <div class="node">⚡ Cache + Coalescer<small>30–45s TTL · single-flight</small></div>
+      <span class="arrow">→</span>
+      <div class="node up">🛰️ RailRadar<small>GPS telemetry (Bearer auth)</small></div>
+    </div>
+    <div class="grid g3" style="margin-top:2.2rem">
+      <div class="card"><h3><span class="ico">🔒</span>Secret isolation</h3><p>Client bundles contain no API keys — it doesn't even know RailRadar exists.</p></div>
+      <div class="card"><h3><span class="ico">🤝</span>Request coalescing</h3><p>50 clients polling one train = 1 outbound request, broadcast to all.</p></div>
+      <div class="card"><h3><span class="ico amberico">♻️</span>Graceful degradation</h3><p>On 429/503, serve stale data with <span class="mono">X-Cache: STALE</span> + a freshness warning.</p></div>
+    </div>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>05</b> / 10</div>
+  </section>
+
+  <!-- 6. TECH STACK -->
+  <section class="slide">
+    <div class="kicker">Technology Stack</div>
+    <h2><span class="bar"></span>Built on a strict, modern toolchain</h2>
+    <table>
+      <tr><th>Layer</th><th>Technologies</th></tr>
+      <tr><td class="layer">Mobile &amp; Web UI</td><td>React Native · Expo SDK 57 · Expo Router · React Native Web</td></tr>
+      <tr><td class="layer">Language</td><td>TypeScript — strict mode across all packages</td></tr>
+      <tr><td class="layer">State &amp; Storage</td><td>Zustand · AsyncStorage (offline persistence)</td></tr>
+      <tr><td class="layer">Mapping</td><td>Leaflet.js · OpenStreetMap · CartoDB Voyager tiles · react-native-webview</td></tr>
+      <tr><td class="layer">Validation</td><td>Zod schemas for runtime request/response verification</td></tr>
+      <tr><td class="layer">Backend</td><td>Node.js · Hono framework · @hono/node-server</td></tr>
+      <tr><td class="layer">Testing</td><td>Vitest — route handlers, transformers, cache, schemas</td></tr>
+    </table>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>06</b> / 10</div>
+  </section>
+
+  <!-- 7. API -->
+  <section class="slide">
+    <div class="kicker">API Surface</div>
+    <h2><span class="bar"></span>Versioned REST endpoints <span class="mono" style="font-size:.6em;color:var(--slate)">/api/v1</span></h2>
+    <div class="grid g2">
+      <div class="card"><h3 class="mono" style="color:var(--cyan)">GET /trains/:n/live</h3><p>Live status, speed, location, next station &amp; delay for a 5-digit train number.</p></div>
+      <div class="card"><h3 class="mono" style="color:var(--cyan)">GET /trains/between</h3><p>Direct trains running between a <span class="mono">from</span> and <span class="mono">to</span> station code.</p></div>
+      <div class="card"><h3 class="mono" style="color:var(--cyan)">GET /stations/search</h3><p>Station autocomplete by partial code or name (min 2 chars).</p></div>
+      <div class="card"><h3 class="mono" style="color:var(--cyan)">GET /trains/:n/coaches</h3><p>Coach composition / rake layout for a train.</p></div>
+      <div class="card"><h3 class="mono" style="color:var(--cyan)">GET /trains/:n/platform</h3><p>Platform status with Confirmed / Expected / Unavailable state.</p></div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:.6rem">
+        <span class="pill ok">● On time</span>
+        <span class="pill warn">● Delayed</span>
+        <span class="pill bad">● Disrupted</span>
+      </div>
+    </div>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>07</b> / 10</div>
+  </section>
+
+  <!-- 8. BY THE NUMBERS -->
+  <section class="slide">
+    <div class="kicker">By The Numbers</div>
+    <h2><span class="bar"></span>Engineering snapshot</h2>
+    <div class="grid g4">
+      <div class="card"><div class="stat">3</div><div class="statlbl">Platforms from one codebase</div></div>
+      <div class="card"><div class="stat">225+</div><div class="statlbl">Automated tests (FE + BE)</div></div>
+      <div class="card"><div class="stat amber">30–45s</div><div class="statlbl">Adaptive polling &amp; cache TTL</div></div>
+      <div class="card"><div class="stat">0</div><div class="statlbl">Secrets in the client bundle</div></div>
+      <div class="card"><div class="stat">71</div><div class="statlbl">TypeScript source files</div></div>
+      <div class="card"><div class="stat">5</div><div class="statlbl">Core REST endpoints</div></div>
+      <div class="card"><div class="stat amber">100%</div><div class="statlbl">Expo Go compatibility</div></div>
+      <div class="card"><div class="stat">&lt;1s</div><div class="statlbl">Cached initial load target</div></div>
+    </div>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>08</b> / 10</div>
+  </section>
+
+  <!-- 9. SECURITY & PRINCIPLES -->
+  <section class="slide">
+    <div class="kicker">Principles</div>
+    <h2><span class="bar"></span>Security &amp; design discipline</h2>
+    <ul class="clean">
+      <li><b>Zero-trust frontend:</b> no third-party railway keys ever reach the client.</li>
+      <li><b>Error sanitization:</b> auth headers, tokens &amp; upstream keys redacted before logging or responding.</li>
+      <li class="amber"><b>Truthful by default:</b> approximations are labeled, GPS gaps are flagged — never faked.</li>
+      <li><b>Lifecycle-aware polling:</b> pauses on background / hidden tab via AppState &amp; visibilitychange.</li>
+      <li><b>Deliberately out of scope:</b> no ticketing, PNR, seat availability or accounts — focus stays on tracking.</li>
+    </ul>
+    <div class="brandfoot">TrainPulse</div>
+    <div class="pagenum"><b>09</b> / 10</div>
+  </section>
+
+  <!-- 10. CLOSE -->
+  <section class="slide">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M4 28 h7 l4-12 6 24 5-18 4 12 h14" stroke="#22D3EE" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="40" cy="28" r="4" fill="#FFB020"/>
+      </svg>
+      <span>Train<span style="color:var(--cyan)">Pulse</span></span>
+    </div>
+    <div style="margin-top:5vh">
+      <div class="kicker">Summary</div>
+      <h1 style="font-size:clamp(2rem,4.5vw,3.6rem)">The train tracker you can<br><span class="pulse">actually trust</span>.</h1>
+      <p class="sub">Map-first. Cross-platform. Strictly typed. Secure by design — and honest about what it does and doesn't know.</p>
+      <div style="margin-top:2rem">
+        <span class="tag">Expo + RN Web</span><span class="tag">Hono Backend</span>
+        <span class="tag">Zod DTOs</span><span class="tag">Leaflet / OSM</span><span class="tag">MIT License</span>
+      </div>
+    </div>
+    <div class="brandfoot">Thank you</div>
+    <div class="pagenum"><b>10</b> / 10</div>
+  </section>
+
+</div>
+<div class="hint">↑ / ↓ or scroll to navigate · press <b>P</b> or Ctrl/Cmd-P to export as PDF</div>
+<script>
+  document.addEventListener('keydown',e=>{
+    const slides=[...document.querySelectorAll('.slide')];
+    const h=window.innerHeight;
+    const cur=Math.round(document.querySelector('.deck').scrollTop/h);
+    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(cur+1,slides.length-1)].scrollIntoView({behavior:'smooth'});}
+    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(cur-1,0)].scrollIntoView({behavior:'smooth'});}
+    if(e.key==='p'||e.key==='P'){window.print();}
+  });
+</script>
+</body>
+</html>
