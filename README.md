@@ -22,15 +22,13 @@
 
 ## 📸 Screenshots & UI Preview
 
-> *Place application screenshots in `assets/screenshots/` and link them below.*
-
 | Where-to-Where Search | Live Tracking & Map | Coach Layout & My Coach |
 | :---: | :---: | :---: |
-| *`![Search](assets/screenshots/search.png)`* | *`![Tracking](assets/screenshots/tracking.png)`* | *`![Coach](assets/screenshots/coach.png)`* |
+| ![Where-to-Where Search](assets/screenshots/Where-to-Where%20Search.png) | ![Live Tracking & Map](assets/screenshots/Live%20Tracking%20%26%20Map.png) | ![Coach Layout & My Coach](assets/screenshots/Coach%20Layout%20%26%20My%20Coach.png) |
 
 | Platform Status Card | Station Autocomplete | Desktop Responsive Mode |
 | :---: | :---: | :---: |
-| *`![Platform](assets/screenshots/platform.png)`* | *`![Autocomplete](assets/screenshots/autocomplete.png)`* | *`![Desktop](assets/screenshots/desktop.png)`* |
+| ![Platform Status Card](assets/screenshots/Platform%20Status%20Card.png) | ![Station Autocomplete](assets/screenshots/Station%20Autocomplete.png) | ![Desktop Responsive Mode](assets/screenshots/Desktop%20Responsive%20Mode1.png)<br/><br/>![Desktop Responsive Mode 2](assets/screenshots/Desktop%20Responsive%20Mode2.png) |
 
 ---
 
