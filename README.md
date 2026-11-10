@@ -81,7 +81,7 @@ flowchart TD
 
 | Layer | Technologies |
 | :--- | :--- |
-| **Mobile & Web UI** | React Native, Expo SDK 52, Expo Router, React Native Web |
+| **Mobile & Web UI** | React Native, Expo SDK 57, Expo Router, React Native Web |
 | **Language** | TypeScript (strict mode enabled across all packages) |
 | **State & Storage** | Zustand, `@react-native-async-storage/async-storage` |
 | **Mapping Engine** | Leaflet.js, OpenStreetMap, CartoDB Voyager tiles, `react-native-webview` |
